@@ -1,0 +1,175 @@
+
+class AppString {
+  ///Mentor&Mentee
+  static String welcomeText='Welcome!';
+  static String menuText='Menu';
+  static String menteeText='Mentee';
+  static String mentorText='Mentor';
+  static String nextText='Next';
+  static String eventText='Event';
+  static String cancelText='Cancel';
+  static String notAvailableText='Not available';
+  static String scheduleText='Schedule';
+  static String sendMessageText='Send Message';
+  static String addScheduleNote1Text='[Note: This schedule is for all mentees. Anyone can join your schedule.]';
+  static String addScheduleNote2Text='[Note: This schedule is just for this mentee.]';
+  static String mentorshipRequestsText='Mentorship Requests';
+  static String visibleSupportText='Your profile will be visible on the search page so mentors can connect with you';
+  static String hideSupportText='Your profile will be hide on the search page so mentors can connect with you.';
+  static String shopText='Shop';
+  static String otpSupportText(String? email) =>" We have sent a verification email to '${email??''}'.If you don't see the email in your inbox, check your spam folder. Email codes can take up to 1-2 minutes to arrive : ";
+  static String branchText='Branch';
+  static String confirmText='Confirm';
+  static String previousText='Previous';
+  static String toEnterYourMailToResetPassText='Enter your email to reset your \n password.';
+  static String createYourAccountText='Create Your Account';
+  static String descriptionText='Description';
+  static String verifyYourAccountExt="Verify Your Account";
+  static String whatTypeOfMenteeYouCanSupportText='What type of Mentees you can best support?';
+  static String whatTypeOfMenteeYouCanSupportDescText="Describe the type of mentee you can best support (e.g., 'Mentoring a Navy pilot transitioning to commercial aviation' or 'Helping an Army officer interested in cyber operations').";
+  static String currentStatusText='Current Status';
+  static String instagramOptionalText='Instagram (Optional)';
+  static String mentorshipRequestText='Mentorship request';
+  static String defineRoleText='Define Role';
+  static String step1BasicInfoText='Step 1 : Basic Information';
+  static String step2RoleAndProfileText='Step 2 : Role & Profile';
+  static String step3AccountInfoText='Step 3 : Account Info';
+  static String profileVisibilityText='Profile Visibility';
+  static String iHaveReadAndAcceptText='I’ve read and accepted the';
+  static String privacyPolicyText='Privacy policy';
+  static String profileVisibilityDescText="To show your profile in search, select 'Visible'. Otherwise, select 'Hide'. You can change this anytime.";
+  static String matchedMentorMenteeText='Matched with a mentor/mentee?';
+  static String matchedMentorMenteeDescText='Via Instagram';
+  static String ifYouCantFindSpecificMentorDescText='If you cannot find a specific mentor, please submit a new request below..';
+  static String whatTypeOfMentorLookingForText='What type of mentor are you looking for?';
+  static String whatTypeOfMentorLookingForDescText="Give a brief description of the type of mentor you are looking for. Mentors will see this description to connect with you. You can change this anytime.";
+  static String readAndAcceptTheText='I’ve read and accepted the';
+  static String weAreHereForSupportYouText='We’re here to support you every step of the way.';
+  static String weWillFinishTheSignUpText='We’ll finish the sign-up in 3 steps!';
+  static String stepSignUpText='Step 1: Basic Information\n Step 2: Role & Profile \n Step 3: Account Info ';
+
+  ///Golf
+  static String choseAFileText='Chose a File';
+  static String saveAndContinueText='Save And Continue';
+  static String locationText='Location';
+  static String linkText='Link';
+  static String requestToPlayText='Request to play';
+  static String contactUsText='Contact Us';
+  static String subjectText='Subject';
+  static String messageText='Message';
+  static String stateText='State';
+  static String countryText='Country';
+  static String cityText='City';
+  static String pointText='Point';
+  static String chatText='Chat';
+  static String editText='Edit';
+  static String deleteText='Delete';
+  static String dateAndTimeText='Date & Time';
+  static String standByText='Stand By';
+  static String approveText='Approve';
+  static String detailsText='Details';
+  static String sendText='Send';
+  static String homeText="Home";
+  static String addTournamentText="Add Tournament";
+  static String addSmallOutingText="Add Small Outing";
+  static String requestedToPlayMyTournamentText="Requested To Play My Tournament";
+  static String viewInvitationText="View Invitation";
+  static String paymentText= "Payment";
+  static String holeText= "Hole";
+  static String invitationText= "Invitation";
+  static String facebookLinkText= "FaceBook Link";
+  static String instagramLinkText= "Instagram Link";
+  static String linkedinLinkText= "Linkedin Link";
+  static String xLinkText= "X Link";
+  static String myProfileText= "My Profile";
+  static String isAmountPaidText= "Is Amount Paid ?";
+  static String createChallengeText="Create Challenge";
+  static String createWinnerDetailsText="Create Winner Details";
+  static String editWinnerSkinText="Edit Winner Skin";
+  static String completedTournamentText="Completed Tournament";
+  static String requestedToPlayMySmallOutingText="Requested To Play My Small outing";
+  static String areYouSureYouDeleteText='Are you sure you want to delete this item?';
+
+
+
+  static String skipText='Skip';
+  static String joblessText='Jobless';
+  static String onboardingText='Welcome to Jobless';
+  static String subonboardingText='The app that connects people who are jobless. Share your experiences, find support, join a community, and connect with others who understand what you re going through.';
+  static String loginText='Login';
+  static String loginToTourAccountText='Log in To Your Account';
+  static String signInToContinueText='Sign in to Continue';
+  static String registerText='Register';
+  static String signupText='Sign Up';
+  static String emailText='Email';
+  static String passawordText='Password';
+  static String confirmPasswordText='Confirm Password';
+  static String subLoginText='welcome back! we’ve missed you.';
+  static String jobConfiramTitleText='Are you currently jobless?';
+  static String subjobConfiramTitleText='Finding a job can be challenging, but the Jobless app is here to help. Whether you re seeking your first job, changing careers';
+  static String yesText='Yes';
+  static String noText='No';
+  static String submitText='Submit';
+  static String choceCategoriText='Choose a Category';
+  static String moreCategoryText='Choose three or more categories that represent what you want to see';
+/// SignUp String
+
+  static String createAccountText='Create account';
+  static String subCreateText='sign up now to get started on your journey.';
+  static String uploadProfilePictureText='Upload Profile Picture';
+  static String nameText='Name';
+  static String firstNameText='First Name';
+  static String lastNameText='Last Name';
+  static String fullNameText='Full Name';
+  static String phoneText='Phone Number';
+  static String genderText='Gender';
+  static String dateOfBirthText='Date Of Birth';
+  static String signUoConditionText='By creating an account, I accept the Terms & Conditions & Privacy Policy.';
+
+  static String forgotPasswordText="Forgot Password";
+  static String subforgotPassword="Please enter your email address to reset password.";
+  static String verifyEmailTExt="Verify Email";
+  static String sentOtpTExt="Sent OTP";
+  static String subverifyEmailTExt="Please check your email and enter the code";
+  static String redentCodeTExt="Didn’t receive code? Resend it";
+  static String selectLocationTExt="Select your location";
+  static String homeSearchText="I feel the need-the need for speed....";
+  static String suggestedText="Suggested";
+  static String aboutText="About";
+  static String jobexperienceText="job experience ";
+  static String bioText="Bio ";
+  static String jobLessCategotiText="job less category";
+  static String postText="Post";
+  static String notificationText="Notification";
+  static String profileText="Profile";
+  static String personalInfoText="Personal information";
+  static String myFriendText=" My friends list";
+  static String myGroupText=" My group list";
+  static String groupText=" My Group";
+  static String settingText="Setting";
+  static String logoutText="logout";
+  static String signOutText="Sign out";
+  static String myPostText="My Post";
+  static String myBioText="My Bio";
+  static String statusText="Status Show";
+  static String changePasswordText="Change Password";
+  static String privacyText="Privacy policy";
+  static String termConditionText="Terms & conditions";
+  static String aboutusText="About us";
+  static String supportText="Support";
+  static String friendListText="Friends list";
+  static String acceptText="Accept";
+  static String aboutGrougText="about group";
+  static String descriptionsText="Description";
+  static String memberText="Members";
+  static String seeALlText="See All";
+  static String leaveGroupText="Leave Group";
+  ///============Change password screen======
+  static String returnToTheLoginPageText="Return to the login page to enter your account with your new password.";
+  static String passwordChangedText="Password Changed!";
+
+  ///=========Update profile======
+  static String updateProfileText="Update Profile";
+  //static String verifyEmailTExt="";
+
+}
