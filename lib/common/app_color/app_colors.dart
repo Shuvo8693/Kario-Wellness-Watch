@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors{
 
   static const primaryColor= Color(0xFF3ABA75);
+  static final scaffoldBgColor= Colors.grey[50];
   static const seconderyAppColor= Color(0xFF241E2B);
   static const pictonBlueColor= Color(0xFF2ABEE5);
   static const melachiteColor= Color(0xFF08E331);

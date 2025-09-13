@@ -9,6 +9,7 @@ ThemeData light({Color color = const Color(0xFF4361EE)}) => ThemeData(
   secondaryHeaderColor: Color(0xFF1ED7AA),
   disabledColor: Color(0xFFBABFC4),
   brightness: Brightness.light,
+  scaffoldBackgroundColor: AppColors.scaffoldBgColor,
 
   hintColor: Color(0xFF9F9F9F),
   cardColor: AppColors.primaryColor,

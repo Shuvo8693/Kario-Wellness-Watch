@@ -8,10 +8,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 // Method 1: Extract and display the embedded base64 image directly
 class ExtractBase64ImageWidget extends StatefulWidget {
   final String svgAssetPath; // Path to your SVG in assets folder
+  final double? height;
+  final double? width;
 
   const ExtractBase64ImageWidget({
     super.key,
-    required this.svgAssetPath,
+    required this.svgAssetPath, this.height, this.width,
   });
 
   @override
@@ -82,12 +84,12 @@ class _ExtractBase64ImageWidgetState extends State<ExtractBase64ImageWidget> {
     }
     if (imageBytes != null) {
       return Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.sp),
         child: Image.memory(
           imageBytes!,
           fit: BoxFit.contain,
-          height: 36.h,
-          width: 66.w,
+          height: widget.height ?? 65.h,
+          width: widget.height ?? 65.w,
           errorBuilder: (context, error, stackTrace) {
             return Center(
               child: Text('Error displaying image'),

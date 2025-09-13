@@ -10,7 +10,7 @@ class WellnessHeaderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 18.h),
+      padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 15.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -70,4 +70,5 @@ class WellnessHeaderCard extends StatelessWidget {
       ),
     );
   }
+
 }
