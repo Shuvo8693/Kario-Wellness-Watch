@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kario_wellness_watch/app/modules/home/widgets/custom_progress_indicator.dart';
+import 'package:kario_wellness_watch/app/modules/home/widgets/wellness_header_card.dart';
 import 'package:kario_wellness_watch/common/app_color/app_colors.dart';
 import 'package:kario_wellness_watch/common/app_images/app_svg.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
@@ -22,7 +23,7 @@ class HomeView extends StatelessWidget {
               SizedBox(height: 20.h),
 
               // Header Card
-              _buildHeaderCard(),
+              WellnessHeaderCard(),
 
               SizedBox(height: 20.h),
 
@@ -46,43 +47,7 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
- // Header card
-  Widget _buildHeaderCard() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFF4CAF50).withOpacity(0.1),
-            Color(0xFF81C784).withOpacity(0.1),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Color(0xFF4CAF50).withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'KARIO WELLNESS WATCH',
-            style: GoogleFontStyles.h5(
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF4CAF50),
-              letterSpacing: 0.5,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'Wear 2 more nights for Runmefit AI to learn your sleep pattern',
-            style: GoogleFontStyles.h6(color: Colors.grey[600], height: 1.3),
-          ),
-        ],
-      ),
-    );
-  }
+
  // Metric row
   Widget _buildTopMetricsRow() {
     return Row(
