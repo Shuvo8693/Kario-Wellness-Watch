@@ -14,32 +14,23 @@ class GenderProgressBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Active step
-        Container(
-          height: 4.h,
-          width: 40.w,
-          decoration: BoxDecoration(
-            color: AppColors.primaryColor,
-            borderRadius: BorderRadius.circular(2.r),
-          ),
-        ),
-
-        SizedBox(width: 8.w),
-
         // Inactive steps
-        ...List.generate(3, (index) => Row(
-          children: [
-            Container(
-              height: 4.h,
-              width: 40.w,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2.r),
+        ...List.generate(progressModel.length, (index) {
+        final progress = progressModel[index];
+          return Row(
+            children: [
+              Container(
+                height: 4.h,
+                width: 40.w,
+                decoration: BoxDecoration(
+                  color: progress.isActive? progress.activeColor : Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
               ),
-            ),
-            if (index < 2) SizedBox(width: 8.w),
-          ],
-        )),
+              if (index < 2) SizedBox(width: 8.w),
+            ],
+          );
+        }),
       ],
     );
   }
@@ -48,6 +39,7 @@ class GenderProgressBar extends StatelessWidget {
 class ProgressModel {
   final Color activeColor;
   final int activeCount;
+  final bool isActive;
 
-  ProgressModel(this.activeCount, {this.activeColor = AppColors.primaryColor});
+  ProgressModel(this.activeCount, this.isActive, {this.activeColor = AppColors.primaryColor});
 }

@@ -8,7 +8,7 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
   final TextInputType? keyboardType;
   final String? obscuringCharacter;
-  final Color? fillColor;
+  final Color? fillColor,textColor;
   final Color? suffixIconColor;
   final Widget? prefixIcon;
   final String? labelText;
@@ -55,7 +55,7 @@ class CustomTextField extends StatefulWidget {
     this.focusNode,
     this.textInputAction,
     this.onEditingComplete,
-    this.onFieldSubmitted,
+    this.onFieldSubmitted, this.textColor,
   });
 
   @override
@@ -95,7 +95,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       cursorColor: AppColors.primaryColor,
       obscureText: _obscureText,
       style: TextStyle(
-        color: AppColors.textColor,
+        color: widget.textColor?? AppColors.textColor,
         fontSize: 16.sp,
       ),
       decoration: InputDecoration(
@@ -103,7 +103,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           horizontal: widget.contentPaddingHorizontal ?? 20.w,
           vertical: widget.contentPaddingVertical ?? 20.w,
         ),
-        fillColor: widget.fillColor ?? AppColors.seconderyAppColor,
+        fillColor: widget.fillColor ?? AppColors.white,
         filled: true,
         prefixIcon: widget.prefixIcon != null
             ? Padding(

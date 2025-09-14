@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:kario_wellness_watch/app/modules/gender_selection/views/age_input_view.dart';
 
 import '../modules/gender_selection/bindings/gender_selection_binding.dart';
 import '../modules/gender_selection/views/gender_selection_view.dart';
@@ -28,6 +29,11 @@ class AppPages {
     GetPage(
       name: _Paths.GENDER_SELECTION,
       page: () => const GenderSelectionView(),
+      binding: GenderSelectionBinding(),
+    ),
+    GetPage(
+      name: _Paths.AGEINPUT,
+      page: () => const AgeInputView(),
       binding: GenderSelectionBinding(),
     ),
   ];

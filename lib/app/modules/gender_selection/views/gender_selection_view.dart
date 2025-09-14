@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:kario_wellness_watch/app/modules/gender_selection/widgets/progress_step.dart';
+import 'package:kario_wellness_watch/app/routes/app_pages.dart';
 import 'package:kario_wellness_watch/common/app_images/app_svg.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 
@@ -18,16 +21,21 @@ class _GenderSelectionViewState extends State<GenderSelectionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.grey.shade600),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: _buildProgressIndicator(),
+      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20.h),
-
-              // Top section with back button and progress indicator
-              _buildTopSection(),
 
               SizedBox(height: 40.h),
 
@@ -66,34 +74,6 @@ class _GenderSelectionViewState extends State<GenderSelectionView> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTopSection() {
-    return Row(
-      children: [
-        // Back button
-        GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Container(
-            padding: EdgeInsets.all(8.w),
-            child: Icon(
-              Icons.arrow_back_ios,
-              size: 20.sp,
-              color: Colors.black,
-            ),
-          ),
-        ),
-
-        SizedBox(width: 24.w),
-
-        // Progress indicator
-        Expanded(
-          child: GenderProgressBar(),
-        ),
-      ],
     );
   }
 
@@ -238,46 +218,21 @@ class _GenderSelectionViewState extends State<GenderSelectionView> {
       // Handle continue action
       print('Selected gender: $selectedGender');
       // Navigate to next screen or save data
-      // Navigator.push(context, MaterialPageRoute(builder: (context) => NextScreen()));
+     Get.toNamed(Routes.AGEINPUT);
     }
   }
-}
 
-class GenderProgressBar extends StatelessWidget {
-  const GenderProgressBar({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildProgressIndicator() {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // Active step
-        Container(
-          height: 4.h,
-          width: 40.w,
-          decoration: BoxDecoration(
-            color: Color(0xFF4CAF50),
-            borderRadius: BorderRadius.circular(2.r),
-          ),
-        ),
-
-        SizedBox(width: 8.w),
-
-        // Inactive steps
-        ...List.generate(3, (index) => Row(
-          children: [
-            Container(
-              height: 4.h,
-              width: 40.w,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
-            if (index < 2) SizedBox(width: 8.w),
-          ],
-        )),
+        ProgressStep(isActive: true),   // Step 1 - completed
+        SizedBox(width: 6.w),
+        ProgressStep(isActive: false),   // Step 2 - current
+        SizedBox(width: 6.w),
+        ProgressStep(isActive: false),  // Step 3 - upcoming
+        SizedBox(width: 6.w),
+        ProgressStep(isActive: false),  // Step 3 - upcoming
       ],
     );
   }

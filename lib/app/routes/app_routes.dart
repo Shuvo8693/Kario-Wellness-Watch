@@ -6,6 +6,7 @@ abstract class Routes {
   static const HOME = _Paths.HOME;
   static const SPLASH = _Paths.SPLASH;
   static const GENDER_SELECTION = _Paths.GENDER_SELECTION;
+  static const AGEINPUT = _Paths.AGEINPUT;
 }
 
 abstract class _Paths {
@@ -13,4 +14,5 @@ abstract class _Paths {
   static const HOME = '/home';
   static const SPLASH = '/splash';
   static const GENDER_SELECTION = '/gender-selection';
+  static const AGEINPUT = '/age_input';
 }
