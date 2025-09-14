@@ -7,6 +7,7 @@ abstract class Routes {
   static const SPLASH = _Paths.SPLASH;
   static const GENDER_SELECTION = _Paths.GENDER_SELECTION;
   static const AGEINPUT = _Paths.AGEINPUT;
+  static const WEIGHTINPUT = _Paths.WEIGHTINPUT;
 }
 
 abstract class _Paths {
@@ -15,4 +16,5 @@ abstract class _Paths {
   static const SPLASH = '/splash';
   static const GENDER_SELECTION = '/gender-selection';
   static const AGEINPUT = '/age_input';
+  static const WEIGHTINPUT = '/weight_input';
 }

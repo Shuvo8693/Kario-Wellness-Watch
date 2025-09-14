@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:kario_wellness_watch/app/modules/gender_selection/widgets/progress_step.dart';
+import 'package:kario_wellness_watch/app/routes/app_pages.dart';
 import 'package:kario_wellness_watch/common/app_color/app_colors.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 import 'package:kario_wellness_watch/common/widgets/custom_button.dart';
@@ -56,61 +59,63 @@ class _AgeInputViewState extends State<AgeInputView> {
         ),
         title: _buildProgressIndicator(),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 40.h),
-            Text(
-              'Enter your age',
-              style: TextStyle(
-                fontSize: 28.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey.shade800,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(24.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 40.h),
+              Text(
+                'Enter your age',
+                style: TextStyle(
+                  fontSize: 28.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade800,
+                ),
               ),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              'Age refines our math - as your watch knows you better.',
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: Colors.grey.shade600,
+              SizedBox(height: 12.h),
+              Text(
+                'Age refines our math - as your watch knows you better.',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: Colors.grey.shade600,
+                ),
               ),
-            ),
-            SizedBox(height: 40.h),
+              SizedBox(height: 40.h),
 
-            // Replace this with your CustomTextField
-            CustomTextField(
-              controller: _ageController,
-              contentPaddingVertical: 18.h,
-              hintText: 'Your age',
-              textColor: Colors.black,
-              hintStyle: GoogleFontStyles.h5(color: Colors.grey),
-              keyboardType: TextInputType.number,
+              // Replace this with your CustomTextField
+              CustomTextField(
+                controller: _ageController,
+                contentPaddingVertical: 18.h,
+                hintText: 'Your age',
+                textColor: Colors.black,
+                hintStyle: GoogleFontStyles.h5(color: Colors.grey),
+                keyboardType: TextInputType.number,
 
-              // Add other parameters as needed
-            ),
+                // Add other parameters as needed
+              ),
 
-            const Spacer(),
+              const Spacer(),
 
-            // Replace this with your CustomButton
-            CustomButton(
-              text: _isAgeValid? 'Continue':'Not Valid',
-              onTap: _isAgeValid ? _onContinuePressed : (){},
-              color: _isAgeValid? AppColors.primaryColor: AppColors.greyColor,
-              // Add other parameters as needed
-            ),
+              // Replace this with your CustomButton
+              CustomButton(
+                text:  'Continue',
+                onTap: _isAgeValid ? _onContinuePressed : (){},
+                color: _isAgeValid? AppColors.primaryColor: AppColors.greyColor,
+                // Add other parameters as needed
+              ),
 
-            SizedBox(height: 32.h),
-          ],
+              SizedBox(height: 32.h),
+            ],
+          ),
         ),
       ),
     );
   }
-
+ //==== onPressed ======
   void _onContinuePressed() {
-    // Navigate to next screen or handle continue action
+    Get.toNamed(Routes.WEIGHTINPUT);
   }
 
   Widget _buildProgressIndicator() {
