@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:kario_wellness_watch/app/routes/app_pages.dart';
 import 'package:kario_wellness_watch/common/app_images/app_svg.dart';
 import 'package:kario_wellness_watch/common/svg_base64/ExtractionBase64Image.dart';
 
-import '../controllers/splash_controller.dart';
 
 
 class SplashView extends StatefulWidget {
@@ -24,6 +22,10 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
+    animateLogo();
+  }
+
+  animateLogo(){
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
@@ -38,9 +40,11 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
     );
 
     _controller.forward().then((v){
-      Get.toNamed(Routes.GENDER_SELECTION);
+     Get.toNamed(Routes.GENDER_SELECTION);
     });
   }
+
+
 
   @override
   void dispose() {

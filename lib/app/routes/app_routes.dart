@@ -8,6 +8,7 @@ abstract class Routes {
   static const GENDER_SELECTION = _Paths.GENDER_SELECTION;
   static const AGEINPUT = _Paths.AGEINPUT;
   static const WEIGHTINPUT = _Paths.WEIGHTINPUT;
+  static const HEIGHTINPUT = _Paths.HEIGHTINPUT;
 }
 
 abstract class _Paths {
@@ -17,4 +18,5 @@ abstract class _Paths {
   static const GENDER_SELECTION = '/gender-selection';
   static const AGEINPUT = '/age_input';
   static const WEIGHTINPUT = '/weight_input';
+  static const HEIGHTINPUT = '/height_input';
 }

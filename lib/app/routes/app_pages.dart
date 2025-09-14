@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:kario_wellness_watch/app/modules/gender_selection/views/age_input_view.dart';
+import 'package:kario_wellness_watch/app/modules/gender_selection/views/height_input_view.dart';
 import 'package:kario_wellness_watch/app/modules/gender_selection/views/weight_input_view.dart';
 
 import '../modules/gender_selection/bindings/gender_selection_binding.dart';
@@ -40,6 +41,11 @@ class AppPages {
     GetPage(
       name: _Paths.WEIGHTINPUT,
       page: () => WeightInputView(),
+      binding: GenderSelectionBinding(),
+    ),
+    GetPage(
+      name: _Paths.HEIGHTINPUT,
+      page: () => HeightInputView(),
       binding: GenderSelectionBinding(),
     ),
   ];

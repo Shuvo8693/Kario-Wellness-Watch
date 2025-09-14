@@ -48,35 +48,17 @@ class _BottomMenuState extends State<BottomMenu> {
     // Navigate to corresponding pages
     switch (index)  {
       case 0 :
-        if(userRole =='user'){
-          Get.offAllNamed(Routes.HOME);
-        } else if(userRole =='mechanic'){
-         // Get.offAllNamed(Routes.MECHANIC_HOME);
-        }else{
-          Get.snackbar('Failed route', ' Select your role before route home');
-        }
+        Get.offAllNamed(Routes.HOME);
         break;
       case 1:
-        if(userRole =='user'){
-          //Get.offAllNamed(Routes.SERVICE);
-        } else if(userRole =='mechanic'){
-          //Get.offAllNamed(Routes.MECHANIC_ORDER);
-        }else{
-          Get.snackbar('Failed route', ' Select your role before route home');
-        }
+        Get.offAllNamed(Routes.HOME);
         break;
       case 2:
-        if(userRole =='user'){
-         // Get.offAllNamed(Routes.MECHANIC);
-        } else if(userRole =='mechanic'){
-         // Get.offAllNamed(Routes.MECHANIC_PAYMENT);
-        }else{
-          Get.snackbar('Failed route', ' Select your role before route home');
-        }
+        Get.offAllNamed(Routes.HOME);
         break;
       case 3:
         //widget.scaffoldKey?.currentState!.openDrawer();
-       // Get.offAllNamed(Routes.ACCOUNT);
+        Get.offAllNamed(Routes.HOME);
         break;
     }
   }
@@ -99,8 +81,8 @@ class _BottomMenuState extends State<BottomMenu> {
           unselectedFontSize: 12.0,
           items: [
             _buildBottomNavItem('====Give====', 'Home'),
-            _buildBottomNavItem(userRole =='mechanic'? '====Give====' : '====Give====', userRole =='mechanic'? 'Order': 'My Booking'),
-            _buildBottomNavItem(userRole =='mechanic'? '====Give====': '====Give====', userRole =='mechanic'? 'Payment': 'Mechanic'),
+            _buildBottomNavItem('====Give====', 'My Booking'),
+            _buildBottomNavItem('====Give====', 'Mechanic'),
             _buildBottomNavItem('====Give====', 'Account'),
           ],
         ),

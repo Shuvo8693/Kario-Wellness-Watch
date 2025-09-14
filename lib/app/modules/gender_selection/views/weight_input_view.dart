@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:kario_wellness_watch/app/modules/gender_selection/widgets/progress_step.dart';
+import 'package:kario_wellness_watch/app/routes/app_pages.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 import 'package:kario_wellness_watch/common/widgets/custom_button.dart';
 import 'package:kario_wellness_watch/common/widgets/custom_text_field.dart';
@@ -43,9 +46,7 @@ class _WeightInputViewState extends State<WeightInputView> {
     });
   }
 
-  void _onContinuePressed() {
-    // Navigate to next screen or handle continue action
-  }
+
 
   @override
   void dispose() {
@@ -131,6 +132,10 @@ class _WeightInputViewState extends State<WeightInputView> {
         ),
       ),
     );
+  }
+
+  void _onContinuePressed() {
+    Get.toNamed(Routes.HEIGHTINPUT);
   }
 
   Widget _buildUnitButton(String unit, bool isSelected, VoidCallback onTap) {

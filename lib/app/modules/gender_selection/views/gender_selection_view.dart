@@ -18,6 +18,10 @@ class GenderSelectionView extends StatefulWidget {
 class _GenderSelectionViewState extends State<GenderSelectionView> {
   String? selectedGender;
 
+  void _goBackToSplash() {
+    Get.offNamed(Routes.SPLASH);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +30,7 @@ class _GenderSelectionViewState extends State<GenderSelectionView> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.grey.shade600),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => _goBackToSplash(),
         ),
         title: _buildProgressIndicator(),
       ),
