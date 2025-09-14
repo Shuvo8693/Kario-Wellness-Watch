@@ -8,6 +8,8 @@ import 'package:kario_wellness_watch/app/modules/home/widgets/wellness_header_ca
 import 'package:kario_wellness_watch/common/app_color/app_colors.dart';
 import 'package:kario_wellness_watch/common/app_images/app_svg.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
+import 'package:kario_wellness_watch/common/bottom_menu/bottom_menu..dart';
+import 'package:kario_wellness_watch/common/widgets/custom_button.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -15,6 +17,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomMenu(0),
       appBar: HealthAppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -105,20 +108,13 @@ class HomeView extends StatelessWidget {
 
   Widget _buildEditButton() {
     return Center(
-      child: TextButton(
-        onPressed: () {
+      child: CustomButton(
+        onTap: () {
           // Handle edit action
         },
-        style: TextButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-        ),
-        child: Text(
-          'Edit data card',
-          style: GoogleFontStyles.h5(
-            color: Color(0xFF4CAF50),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        text: 'Edit data card',
+        textStyle: GoogleFontStyles.h2(color: AppColors.primaryColor),
+        color: Colors.white,
       ),
     );
   }

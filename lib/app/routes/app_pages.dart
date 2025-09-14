@@ -1,12 +1,18 @@
 import 'package:get/get.dart';
-import 'package:kario_wellness_watch/app/modules/gender_selection/views/age_input_view.dart';
-import 'package:kario_wellness_watch/app/modules/gender_selection/views/height_input_view.dart';
-import 'package:kario_wellness_watch/app/modules/gender_selection/views/weight_input_view.dart';
 
+import '../modules/devices/bindings/devices_binding.dart';
+import '../modules/devices/views/devices_view.dart';
+import '../modules/exercise/bindings/exercise_binding.dart';
+import '../modules/exercise/views/exercise_view.dart';
 import '../modules/gender_selection/bindings/gender_selection_binding.dart';
+import '../modules/gender_selection/views/age_input_view.dart';
 import '../modules/gender_selection/views/gender_selection_view.dart';
+import '../modules/gender_selection/views/height_input_view.dart';
+import '../modules/gender_selection/views/weight_input_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/my/bindings/my_binding.dart';
+import '../modules/my/views/my_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 
@@ -47,6 +53,21 @@ class AppPages {
       name: _Paths.HEIGHTINPUT,
       page: () => HeightInputView(),
       binding: GenderSelectionBinding(),
+    ),
+    GetPage(
+      name: _Paths.EXERCISE,
+      page: () => const ExerciseView(),
+      binding: ExerciseBinding(),
+    ),
+    GetPage(
+      name: _Paths.DEVICES,
+      page: () => const DevicesView(),
+      binding: DevicesBinding(),
+    ),
+    GetPage(
+      name: _Paths.MY,
+      page: () => const MyView(),
+      binding: MyBinding(),
     ),
   ];
 }

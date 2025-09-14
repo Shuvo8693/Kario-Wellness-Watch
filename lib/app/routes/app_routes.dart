@@ -9,6 +9,9 @@ abstract class Routes {
   static const AGEINPUT = _Paths.AGEINPUT;
   static const WEIGHTINPUT = _Paths.WEIGHTINPUT;
   static const HEIGHTINPUT = _Paths.HEIGHTINPUT;
+  static const EXERCISE = _Paths.EXERCISE;
+  static const DEVICES = _Paths.DEVICES;
+  static const MY = _Paths.MY;
 }
 
 abstract class _Paths {
@@ -19,4 +22,7 @@ abstract class _Paths {
   static const AGEINPUT = '/age_input';
   static const WEIGHTINPUT = '/weight_input';
   static const HEIGHTINPUT = '/height_input';
+  static const EXERCISE = '/exercise';
+  static const DEVICES = '/devices';
+  static const MY = '/my';
 }

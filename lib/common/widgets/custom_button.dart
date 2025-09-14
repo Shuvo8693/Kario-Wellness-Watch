@@ -37,6 +37,8 @@ class CustomButton extends StatelessWidget {
         backgroundColor: color ?? AppColors.primaryColor,
         minimumSize: Size(width ?? Get.width, height ?? 48.h),
         padding: paddingInner,
+        splashFactory: InkSplash.splashFactory,
+          foregroundColor: AppColors.primaryColor
       ),
       child: loading
           ? SizedBox(

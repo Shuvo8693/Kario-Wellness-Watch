@@ -4,15 +4,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:kario_wellness_watch/app/routes/app_pages.dart';
 import 'package:kario_wellness_watch/common/app_color/app_colors.dart';
-import 'package:kario_wellness_watch/common/app_icons/app_icons.dart';
-import 'package:kario_wellness_watch/common/prefs_helper/prefs_helpers.dart';
+import 'package:kario_wellness_watch/common/app_images/app_svg.dart';
 
 class BottomMenu extends StatefulWidget {
   final int menuIndex;
-  final String? chooseServiceOrOrder;
-  final String? chooseMechanicOrPayment;
   final GlobalKey<ScaffoldState>? scaffoldKey;
-  const BottomMenu(this.menuIndex, {super.key, this.chooseServiceOrOrder, this.scaffoldKey, this.chooseMechanicOrPayment});
+  const BottomMenu(this.menuIndex, {super.key, this.scaffoldKey});
 
   @override
   _BottomMenuState createState() => _BottomMenuState();
@@ -20,21 +17,12 @@ class BottomMenu extends StatefulWidget {
 
 class _BottomMenuState extends State<BottomMenu> {
   late int _selectedIndex;
-  String? userRole;
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.menuIndex; // Set initial index
-    WidgetsBinding.instance.addPostFrameCallback((__)async{
-      await getRole();
-    });
   }
- getRole()async{
-   String? roleUser = await PrefsHelper.getString('role');
-   setState(() {
-     userRole = roleUser;
-   });
- }
+
   void _onItemTapped(int index) {
     if (_selectedIndex == index) {
       // Prevent unnecessary re-navigation to the same screen
@@ -51,14 +39,14 @@ class _BottomMenuState extends State<BottomMenu> {
         Get.offAllNamed(Routes.HOME);
         break;
       case 1:
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.EXERCISE);
         break;
       case 2:
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.DEVICES);
         break;
       case 3:
         //widget.scaffoldKey?.currentState!.openDrawer();
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.MY);
         break;
     }
   }
@@ -80,10 +68,10 @@ class _BottomMenuState extends State<BottomMenu> {
           selectedFontSize: 12.0,
           unselectedFontSize: 12.0,
           items: [
-            _buildBottomNavItem('====Give====', 'Home'),
-            _buildBottomNavItem('====Give====', 'My Booking'),
-            _buildBottomNavItem('====Give====', 'Mechanic'),
-            _buildBottomNavItem('====Give====', 'Account'),
+            _buildBottomNavItem(AppSvg.home_ring_iconSvg, 'Home'),
+            _buildBottomNavItem(AppSvg.exercise_iconSvg, 'Exercise'),
+            _buildBottomNavItem(AppSvg.watchIconSvg, 'Devices'),
+            _buildBottomNavItem(AppSvg.personIconSvg, 'My'),
           ],
         ),
     );
