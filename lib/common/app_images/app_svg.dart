@@ -13,6 +13,7 @@ class AppSvg{
   static String walkingSvg="$baseUrl/walking.svg";
   static String out_door_runSvg="$baseUrl/out_door_run.svg";
   static String cyclingSvg="$baseUrl/cycling.svg";
+  static String kario_watchSvg="$baseUrl/kario_watch.svg";
 
 
 }

@@ -18,7 +18,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: SafeArea(child: BottomMenu(0)),
-      appBar: HealthAppBar(title: 'Health',isActionActive: true,),
+      appBar: KarioAppBar(title: 'Health',isHomeActionActive: true,),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: Column(

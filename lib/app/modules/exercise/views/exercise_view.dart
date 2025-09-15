@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,7 +17,7 @@ class ExerciseView extends GetView<ExerciseController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HealthAppBar(title: 'Exercise',),
+      appBar: KarioAppBar(title: 'Exercise',),
       bottomNavigationBar: SafeArea(child: BottomMenu(1)),
       body: Column(
         children: [
@@ -142,41 +143,6 @@ class ExerciseView extends GetView<ExerciseController> {
                       child: IgnorePointer(
                         child: Stack(
                           children: [
-                            // Zoom Controls - Top Right
-                            Positioned(
-                              right: 16.w,
-                              top: 16.h,
-                              child: IgnorePointer(
-                                ignoring: false, // Allow interactions with these buttons
-                                child: Column(
-                                  children: [
-                                    _buildMapButton(
-                                      icon: Icons.add,
-                                      onTap: controller.zoomIn,
-                                    ),
-                                    SizedBox(height: 8.h),
-                                    _buildMapButton(
-                                      icon: Icons.remove,
-                                      onTap: controller.zoomOut,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-
-                            // My Location Button - Top Left
-                            Positioned(
-                              left: 16.w,
-                              top: 16.h,
-                              child: IgnorePointer(
-                                ignoring: false, // Allow interactions with this button
-                                child: _buildMapButton(
-                                  icon: Icons.my_location,
-                                  onTap: controller.goToCurrentLocation,
-                                ),
-                              ),
-                            ),
-
                             // GO/STOP Button - Bottom Center
                             Positioned(
                               bottom: 24.h,

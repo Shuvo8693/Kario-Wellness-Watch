@@ -15,7 +15,7 @@ class ExerciseController extends GetxController {
   final currentPosition = Rxn<LatLng>();
 
   // Private variables
-  GoogleMapController? _mapController;
+  GoogleMapController? mapController;
   Position? _currentPosition;
   Position? _currentLocationPosition;
   StreamSubscription<Position>? _positionStream;
@@ -35,7 +35,7 @@ class ExerciseController extends GetxController {
   @override
   void onClose() {
     _positionStream?.cancel();
-    _mapController?.dispose();
+    mapController?.dispose();
     super.onClose();
   }
 
@@ -54,7 +54,7 @@ class ExerciseController extends GetxController {
 
   // Google Maps
   void onMapCreated(GoogleMapController controller) {
-    _mapController = controller;
+    mapController = controller;
     if (_currentPosition != null) {
       _moveToCurrentLocation();
     }
@@ -118,7 +118,7 @@ class ExerciseController extends GetxController {
       _addCurrentLocationMarker(position);
 
       // Move camera to current location
-      if (_mapController != null) {
+      if (mapController != null) {
         _moveToCurrentLocation();
       }
     } catch (e) {
@@ -143,8 +143,8 @@ class ExerciseController extends GetxController {
   }
 
   void _moveToCurrentLocation() {
-    if (_currentPosition != null && _mapController != null) {
-      _mapController!.animateCamera(
+    if (_currentPosition != null && mapController != null) {
+      mapController!.animateCamera(
         CameraUpdate.newLatLngZoom(
           LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
           17.0, // Added zoom level for better view
@@ -155,15 +155,15 @@ class ExerciseController extends GetxController {
 
   // Map controls
   void zoomIn() {
-    _mapController?.animateCamera(CameraUpdate.zoomIn());
+    mapController?.animateCamera(CameraUpdate.zoomIn());
   }
 
   void zoomOut() {
-    _mapController?.animateCamera(CameraUpdate.zoomOut());
+    mapController?.animateCamera(CameraUpdate.zoomOut());
   }
 
-  void goToCurrentLocation() {
-    getCurrentLocation();
+  void goToCurrentLocation() async {
+   await getCurrentLocation();
   }
 
   // Exercise tracking
@@ -246,8 +246,8 @@ class ExerciseController extends GetxController {
     _addCurrentLocationMarker(position);
 
     // Move camera to follow user - Fixed to use standard GoogleMapController
-    if (_mapController != null) {
-      _mapController!.animateCamera(
+    if (mapController != null) {
+      mapController!.animateCamera(
         CameraUpdate.newLatLngZoom(newPoint, 17.0),
       );
     }
