@@ -10,7 +10,7 @@ class DevicesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomMenu(2),
+      bottomNavigationBar: SafeArea(child: BottomMenu(2)),
       appBar: AppBar(
         title: const Text('DevicesView'),
         centerTitle: true,

@@ -40,7 +40,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
     );
 
     _controller.forward().then((v){
-     Get.toNamed(Routes.GENDER_SELECTION);
+     Get.toNamed(Routes.HOME);
     });
   }
 

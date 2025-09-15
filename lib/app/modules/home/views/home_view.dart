@@ -17,37 +17,35 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomMenu(0),
-      appBar: HealthAppBar(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10.h),
+      bottomNavigationBar: SafeArea(child: BottomMenu(0)),
+      appBar: HealthAppBar(title: 'Health',isActionActive: true,),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10.h),
 
-              // Header Card
-              WellnessHeaderCard(),
+            // Header Card
+            WellnessHeaderCard(),
 
-              SizedBox(height: 25.h),
+            SizedBox(height: 25.h),
 
-              // Top Metrics Row
-              _buildTopMetricsRow(),
+            // Top Metrics Row
+            _buildTopMetricsRow(),
 
-              SizedBox(height: 20.h),
+            SizedBox(height: 20.h),
 
-              // Health Metrics Grid
-              AllHealthFeatures(),
+            // Health Metrics Grid
+            AllHealthFeatures(),
 
-              SizedBox(height: 20.h),
+            SizedBox(height: 20.h),
 
-              // Edit Button
-              _buildEditButton(),
+            // Edit Button
+            _buildEditButton(),
 
-              SizedBox(height: 20.h),
-            ],
-          ),
+            SizedBox(height: 20.h),
+          ],
         ),
       ),
     );

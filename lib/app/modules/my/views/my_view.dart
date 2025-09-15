@@ -10,7 +10,7 @@ class MyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomMenu(3),
+      bottomNavigationBar: SafeArea(child: BottomMenu(3)),
       appBar: AppBar(
         title: const Text('MyView'),
         centerTitle: true,

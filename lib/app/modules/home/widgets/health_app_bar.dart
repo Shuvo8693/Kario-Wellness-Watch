@@ -5,11 +5,15 @@ import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart
 class HealthAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMenuTap;
   final VoidCallback? onAddTap;
+  final bool isActionActive;
+  final String title;
 
   const HealthAppBar({
     super.key,
     this.onMenuTap,
     this.onAddTap,
+     this.isActionActive = false,
+    required this.title,
   });
 
   @override
@@ -20,14 +24,14 @@ class HealthAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       toolbarHeight: 60.h,
       title: Text(
-        'Health',
+        title,
         style: GoogleFontStyles.h1(
           fontWeight: FontWeight.w700,
           color: Colors.black,
           fontSize: 28.sp,
         ),
       ),
-      actions: [
+      actions: isActionActive ? [
         // Menu icon button
         IconButton(
           onPressed: onMenuTap ?? () {
@@ -59,7 +63,7 @@ class HealthAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
 
         SizedBox(width: 8.w),
-      ],
+      ] : [],
     );
   }
 
