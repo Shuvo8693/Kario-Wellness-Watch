@@ -1,49 +1,76 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kario_wellness_watch/app/modules/devices/widgets/add_device.dart';
 import 'package:kario_wellness_watch/app/modules/devices/widgets/app_center.dart';
 import 'package:kario_wellness_watch/app/modules/devices/widgets/device_header.dart';
 import 'package:kario_wellness_watch/app/modules/home/widgets/health_app_bar.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 import 'package:kario_wellness_watch/common/bottom_menu/bottom_menu..dart';
 
-class DevicesView extends StatelessWidget {
+class DevicesView extends StatefulWidget {
   const DevicesView({super.key});
+
+  @override
+  State<DevicesView> createState() => _DevicesViewState();
+}
+
+class _DevicesViewState extends State<DevicesView> {
+  bool isDeviceActive = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: KarioAppBar(title: 'Devices',isUnpairActionActive: true,),
+      appBar: KarioAppBar(
+        title: 'Devices',
+        isUnpairActionActive: isDeviceActive,
+        isHomeActionActive: !isDeviceActive,
+        onUnpairTap: () {
+          setState(() {
+            isDeviceActive = false;
+          });
+        },
+      ),
       bottomNavigationBar: SafeArea(child: BottomMenu(2)),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Device Header Section
-              DeviceHeader(),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // add device
+                !isDeviceActive
+                    ? AddDevice(
+                        addDeviceTab: () {
+                          setState(() {
+                            isDeviceActive = true;
+                          });
+                        },
+                      )
+                    : DeviceHeader(),
 
-              SizedBox(height: 8.h),
+                // Device Header Section
+                SizedBox(height: 8.h),
 
-              // Watch Face Gallery Section
-              _buildWatchFaceGallery(),
+                // Watch Face Gallery Section
+                if(isDeviceActive)
+                _buildWatchFaceGallery(),
 
-              SizedBox(height: 8.h),
+                SizedBox(height: 8.h),
 
-              // App Center Section
-              AppCenter(),
+                // App Center Section
+                if(isDeviceActive)
+                AppCenter(),
 
-              SizedBox(height: 24.h),
-            ],
+                SizedBox(height: 24.h),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-
-
   Widget _buildWatchFaceGallery() {
-
     return Container(
       width: double.infinity,
       color: Colors.white,
@@ -65,9 +92,7 @@ class DevicesView extends StatelessWidget {
                 children: [
                   Text(
                     'More',
-                    style: GoogleFontStyles.h5(
-                      color: Colors.grey[600],
-                    ),
+                    style: GoogleFontStyles.h5(color: Colors.grey[600]),
                   ),
                   SizedBox(width: 4.w),
                   Icon(
@@ -90,7 +115,14 @@ class DevicesView extends StatelessWidget {
               itemCount: 3,
               separatorBuilder: (context, index) => SizedBox(width: 16.w),
               itemBuilder: (context, index) {
-                return Container(height: 80.h,width: 50,decoration: BoxDecoration(color: Colors.black,borderRadius: BorderRadius.all(Radius.circular(8.r))),);
+                return Container(
+                  height: 80.h,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.all(Radius.circular(8.r)),
+                  ),
+                );
               },
             ),
           ),
@@ -99,4 +131,3 @@ class DevicesView extends StatelessWidget {
     );
   }
 }
-

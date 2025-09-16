@@ -16,7 +16,7 @@ class DeviceHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
       child: Row(
         children: [
           // Watch Device Image
