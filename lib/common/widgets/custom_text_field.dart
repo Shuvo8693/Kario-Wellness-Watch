@@ -95,7 +95,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       cursorColor: AppColors.primaryColor,
       obscureText: _obscureText,
       style: TextStyle(
-        color: widget.textColor?? AppColors.textColor,
+        color: widget.textColor?? AppColors.black,
         fontSize: 16.sp,
       ),
       decoration: InputDecoration(

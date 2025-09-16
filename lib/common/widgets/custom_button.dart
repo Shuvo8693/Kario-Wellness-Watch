@@ -16,7 +16,7 @@ class CustomButton extends StatelessWidget {
     required this.text,
     this.loading = false,
     this.width,
-    this.height,
+    this.height, this.borderRadius,
   });
 
   final Function() onTap;
@@ -24,6 +24,7 @@ class CustomButton extends StatelessWidget {
   final bool loading;
   final double? height;
   final double? width;
+  final double? borderRadius;
   final Color? color;
   final EdgeInsetsGeometry paddingInner;
   final TextStyle? textStyle;
@@ -33,7 +34,7 @@ class CustomButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: loading ? () {} : onTap,
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius??12.r)),
         backgroundColor: color ?? AppColors.primaryColor,
         minimumSize: Size(width ?? Get.width, height ?? 48.h),
         padding: paddingInner,

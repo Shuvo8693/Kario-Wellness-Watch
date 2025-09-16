@@ -56,6 +56,9 @@ class DeviceHeader extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: 6.w),
+                        // Bluetooth icon
+                        Icon(Icons.bluetooth,color: Colors.blueAccent,size: 15,),
+                        SizedBox(width: 3.w),
                         Text(
                           'Connected',
                           style: GoogleFontStyles.h6(
@@ -64,9 +67,7 @@ class DeviceHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     SizedBox(width: 16.w),
-
                     // Battery indicator
                     Row(
                       children: [

@@ -84,7 +84,7 @@ class _ExtractBase64ImageWidgetState extends State<ExtractBase64ImageWidget> {
     }
     if (imageBytes != null) {
       return Container(
-        padding: EdgeInsets.all(16.sp),
+        padding: EdgeInsets.all(8.sp),
         child: Image.memory(
           imageBytes!,
           fit: BoxFit.contain,
