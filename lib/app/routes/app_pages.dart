@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:kario_wellness_watch/app/modules/auth/views/signup_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/sign_in_view.dart';
@@ -74,6 +75,12 @@ class AppPages {
     GetPage(
       name: _Paths.SIGNIN,
       page: () => const SignInView(),
+      binding: AuthBinding(),
+    ),
+
+    GetPage(
+      name: _Paths.SIGNUP,
+      page: () =>  SignUpScreen(),
       binding: AuthBinding(),
     ),
   ];

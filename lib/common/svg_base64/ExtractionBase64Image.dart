@@ -84,7 +84,7 @@ class _ExtractBase64ImageWidgetState extends State<ExtractBase64ImageWidget> {
     }
     if (imageBytes != null) {
       return Container(
-        padding: EdgeInsets.all(8.sp),
+        padding: EdgeInsets.all(2.sp),
         child: Image.memory(
           imageBytes!,
           fit: BoxFit.contain,
@@ -98,7 +98,6 @@ class _ExtractBase64ImageWidgetState extends State<ExtractBase64ImageWidget> {
         ),
       );
     }
-
     return Center(child: Text('No image to display'));
   }
 }
