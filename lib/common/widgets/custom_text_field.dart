@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kario_wellness_watch/common/app_color/app_colors.dart';
 import 'package:kario_wellness_watch/common/app_constant/app_constant.dart';
+import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
@@ -95,7 +96,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       cursorColor: AppColors.primaryColor,
       obscureText: _obscureText,
       style: TextStyle(
-        color: widget.textColor?? AppColors.textColor,
+        color: widget.textColor?? AppColors.black,
         fontSize: 16.sp,
       ),
       decoration: InputDecoration(
@@ -118,7 +119,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         labelText: widget.labelText,
         hintText: widget.hintText,
-        hintStyle: widget.hintStyle,
+        hintStyle: widget.hintStyle?? GoogleFontStyles.h5(color: AppColors.greyColor),
         labelStyle: widget.labelTextStyle,
         // border: _getDefaultBorder(),
         // enabledBorder: _getDefaultBorder(),

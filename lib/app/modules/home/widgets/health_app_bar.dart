@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 
-class HealthAppBar extends StatelessWidget implements PreferredSizeWidget {
+class KarioAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMenuTap;
   final VoidCallback? onAddTap;
+  final VoidCallback? onUnpairTap;
+  final bool isHomeActionActive;
+  final bool isUnpairActionActive;
+  final String title;
 
-  const HealthAppBar({
+  const KarioAppBar({
     super.key,
     this.onMenuTap,
     this.onAddTap,
+     this.isHomeActionActive = false,
+     this.isUnpairActionActive = false,
+    required this.title, this.onUnpairTap,
   });
 
   @override
@@ -20,14 +27,14 @@ class HealthAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       toolbarHeight: 60.h,
       title: Text(
-        'Health',
+        title,
         style: GoogleFontStyles.h1(
           fontWeight: FontWeight.w700,
           color: Colors.black,
           fontSize: 28.sp,
         ),
       ),
-      actions: [
+      actions: isHomeActionActive ? [
         // Menu icon button
         IconButton(
           onPressed: onMenuTap ?? () {
@@ -59,6 +66,8 @@ class HealthAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
 
         SizedBox(width: 8.w),
+      ] : [
+        if(isUnpairActionActive) TextButton(onPressed: onUnpairTap, child: Text('Unpair'))
       ],
     );
   }

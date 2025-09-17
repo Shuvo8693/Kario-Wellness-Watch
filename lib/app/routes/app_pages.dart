@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
+import 'package:kario_wellness_watch/app/modules/auth/views/signup_view.dart';
 
+import '../modules/auth/bindings/auth_binding.dart';
+import '../modules/auth/views/sign_in_view.dart';
 import '../modules/devices/bindings/devices_binding.dart';
 import '../modules/devices/views/devices_view.dart';
 import '../modules/exercise/bindings/exercise_binding.dart';
@@ -68,6 +71,17 @@ class AppPages {
       name: _Paths.MY,
       page: () => const MyView(),
       binding: MyBinding(),
+    ),
+    GetPage(
+      name: _Paths.SIGNIN,
+      page: () => const SignInView(),
+      binding: AuthBinding(),
+    ),
+
+    GetPage(
+      name: _Paths.SIGNUP,
+      page: () =>  SignUpScreen(),
+      binding: AuthBinding(),
     ),
   ];
 }

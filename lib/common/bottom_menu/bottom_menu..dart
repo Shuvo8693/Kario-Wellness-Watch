@@ -54,7 +54,7 @@ class _BottomMenuState extends State<BottomMenu> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 80.h,
+      height: 70.h,
       child: BottomNavigationBar(
           currentIndex: _selectedIndex, // Set the selected index
           onTap: _onItemTapped, // Handle taps on items

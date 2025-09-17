@@ -28,6 +28,16 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	  <!-- Add these keys -->
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>This app needs location access to track your exercise routes and distance.</string>
+
+        <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+        <string>This app needs location access to track your exercise routes and distance even when the app is in the background.</string>
+
+        <!-- If you need background location -->
+        <key>NSLocationAlwaysUsageDescription</key>
+        <string>This app needs location access to track your exercise routes continuously.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
