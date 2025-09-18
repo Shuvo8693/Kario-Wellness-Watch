@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:kario_wellness_watch/app/modules/my/widgets/menu_item.dart';
 import 'package:kario_wellness_watch/app/routes/app_pages.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
@@ -107,7 +106,9 @@ class MyView extends StatelessWidget {
           MyMenuItem(
             icon: Icons.person_outline,
             title: 'Personal',
-            onTap: () {},
+            onTap: () {
+              Get.toNamed(Routes.PROFILEEDIT);
+            },
           ),
           _buildDivider(),
           MyMenuItem(

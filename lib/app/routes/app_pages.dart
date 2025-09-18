@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:kario_wellness_watch/app/modules/auth/views/signup_view.dart';
+import 'package:kario_wellness_watch/app/modules/my/views/personal_profile_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/sign_in_view.dart';
@@ -70,6 +71,11 @@ class AppPages {
     GetPage(
       name: _Paths.MY,
       page: () => const MyView(),
+      binding: MyBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILEEDIT,
+      page: () => ProfileEditScreen(),
       binding: MyBinding(),
     ),
     GetPage(
