@@ -107,7 +107,7 @@ class MyView extends StatelessWidget {
             icon: Icons.person_outline,
             title: 'Personal',
             onTap: () {
-              Get.toNamed(Routes.PROFILEEDIT);
+              Get.toNamed(Routes.PROFILESHOW);
             },
           ),
           _buildDivider(),

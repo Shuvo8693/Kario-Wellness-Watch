@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:kario_wellness_watch/app/modules/auth/controllers/sign_up_controller.dart';
+import 'package:kario_wellness_watch/app/modules/my/widgets/profile_image_picker.dart';
 import 'package:kario_wellness_watch/common/app_color/app_colors.dart';
 import 'package:kario_wellness_watch/common/widgets/custom_text_field.dart';
 import 'package:kario_wellness_watch/common/widgets/custom_button.dart';
@@ -13,6 +17,7 @@ class ProfileEditScreen extends StatefulWidget {
 }
 
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
+   final SignUpController _signUpController = Get.put(SignUpController());
   final _formKey = GlobalKey<FormState>();
   final _nicknameController = TextEditingController(text: 'Akash Roy');
   final _birthdayController = TextEditingController(text: '2001/07/09');
@@ -73,40 +78,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     children: [
                       SizedBox(height: 20.h),
 
-                      // Avatar Section
-                      Center(
-                        child: Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 40.r,
-                              backgroundColor: AppColors.primaryColor.withOpacity(0.1),
-                              child: Icon(
-                                Icons.person,
-                                size: 40.sp,
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                width: 24.w,
-                                height: 24.h,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.white, width: 2),
-                                ),
-                                child: Icon(
-                                  Icons.edit,
-                                  size: 12.sp,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // profile image picker
+                      ProfileImagePicker(controller: _signUpController),
 
                       SizedBox(height: 30.h),
 
