@@ -46,3 +46,12 @@ app.*.map.json
 
 # key
 /lib/sk_key.dart
+
+# FVM Version Cache
+.fvm/
+
+# FVM Flutter SDK symlink
+flutter/
+
+# FVM configuration (optional - some teams prefer to track this)
+.fvmrc
