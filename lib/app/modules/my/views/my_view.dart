@@ -120,7 +120,9 @@ class MyView extends StatelessWidget {
           MyMenuItem(
             icon: Icons.lock_outline,
             title: 'Permissions',
-            onTap: () {},
+            onTap: () {
+              Get.toNamed(Routes.PERMISSION);
+            },
           ),
           _buildDivider(),
           MyMenuItem(

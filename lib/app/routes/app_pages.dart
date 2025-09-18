@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:kario_wellness_watch/app/modules/auth/views/signup_view.dart';
+import 'package:kario_wellness_watch/app/modules/my/views/permission_screen.dart';
 import 'package:kario_wellness_watch/app/modules/my/views/profile_edit_view.dart';
 import 'package:kario_wellness_watch/app/modules/my/views/profile_view.dart';
 
@@ -82,6 +83,11 @@ class AppPages {
     GetPage(
       name: _Paths.PROFILESHOW,
       page: () => ProfileShowScreen(),
+      binding: MyBinding(),
+    ),
+    GetPage(
+      name: _Paths.PERMISSION,
+      page: () => PermissionsScreen(),
       binding: MyBinding(),
     ),
     GetPage(

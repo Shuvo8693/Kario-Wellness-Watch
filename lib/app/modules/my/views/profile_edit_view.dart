@@ -144,7 +144,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       ),
 
                       SizedBox(height: 20.h),
-
+                     // === Birthday ===
                       GestureDetector(
                         onTap: () async {
                           final DateTime? picked = await showDatePicker(

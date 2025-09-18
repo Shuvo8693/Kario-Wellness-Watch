@@ -16,6 +16,7 @@ abstract class Routes {
   static const SIGNUP = _Paths.SIGNUP;
   static const PROFILEEDIT = _Paths.PROFILEEDIT;
   static const PROFILESHOW = _Paths.PROFILESHOW;
+  static const PERMISSION = _Paths.PERMISSION;
 }
 
 abstract class _Paths {
@@ -33,4 +34,5 @@ abstract class _Paths {
   static const SIGNUP = '/signUp';
   static const PROFILEEDIT = '/profile_edit';
   static const PROFILESHOW = '/profile_show';
+  static const PERMISSION = '/permission';
 }
