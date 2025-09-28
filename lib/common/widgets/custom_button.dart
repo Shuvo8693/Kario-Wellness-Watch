@@ -19,7 +19,7 @@ class CustomButton extends StatelessWidget {
     this.height, this.borderRadius,
   });
 
-  final Function() onTap;
+  final VoidCallback onTap;
   final String text;
   final bool loading;
   final double? height;

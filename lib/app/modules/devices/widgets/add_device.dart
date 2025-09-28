@@ -11,46 +11,42 @@ class AddDevice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 80.h,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFF4DD0E1),
-        borderRadius: BorderRadius.all(Radius.circular(12.r)),
-
-      ),
-      child: Center(
-        child: GestureDetector(
-          onTap: addDeviceTab,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Plus icon circle
-              Container(
-                width: 40.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor,
-                  shape: BoxShape.circle,
+    return SizedBox(
+      height: 85.h,
+      child: Card(
+        child: Center(
+          child: GestureDetector(
+            onTap: addDeviceTab,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Plus icon circle
+                Container(
+                  width: 40.w,
+                  height: 40.h,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                    size: 24.sp,
+                  ),
                 ),
-                child: Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 24.sp,
-                ),
-              ),
 
-              SizedBox(width: 16.w),
+                SizedBox(width: 16.w),
 
-              // Add Device text
-              Text(
-                'Add Device',
-                style: GoogleFontStyles.h2(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                // Add Device text
+                Text(
+                  'Add Device',
+                  style: GoogleFontStyles.h2(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

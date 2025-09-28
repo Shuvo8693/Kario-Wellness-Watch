@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kario_wellness_watch/app/modules/devices/widgets/add_device.dart';
 import 'package:kario_wellness_watch/app/modules/devices/widgets/app_center.dart';
+import 'package:kario_wellness_watch/app/modules/devices/widgets/device_connection_card.dart';
 import 'package:kario_wellness_watch/app/modules/devices/widgets/device_header.dart';
 import 'package:kario_wellness_watch/app/modules/home/widgets/health_app_bar.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
@@ -16,6 +17,7 @@ class DevicesView extends StatefulWidget {
 
 class _DevicesViewState extends State<DevicesView> {
   bool isDeviceActive = false;
+  bool isConnected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class _DevicesViewState extends State<DevicesView> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                SizedBox(height: 12.h),
                 // add device
                 !isDeviceActive
                     ? AddDevice(
@@ -47,7 +50,29 @@ class _DevicesViewState extends State<DevicesView> {
                         },
                       )
                     : DeviceHeader(),
-
+                SizedBox(height: 40.h),
+                if(!isDeviceActive)
+                DeviceConnectionCard(
+                  deviceName: 'S5-66d42',
+                  deviceId: '93:05:12:C9:6D:42',
+                  isConnected: isConnected,
+                  onConnect: () {
+                    setState(() {
+                      isConnected = true;
+                      isDeviceActive = true;
+                    });
+                    // Handle connect logic
+                    print('Connecting to device...');
+                  },
+                  onDisconnect: () {
+                    setState(() {
+                      isConnected = false;
+                      isDeviceActive = false;
+                    });
+                    // Handle disconnect logic
+                    print('Disconnecting from device...');
+                  },
+                ),
                 // Device Header Section
                 SizedBox(height: 8.h),
 

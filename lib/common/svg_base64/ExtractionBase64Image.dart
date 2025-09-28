@@ -78,24 +78,20 @@ class _ExtractBase64ImageWidgetState extends State<ExtractBase64ImageWidget> {
     if (isLoading) {
       return Center(child: CupertinoActivityIndicator());
     }
-
     if (errorMessage != null) {
       return Center(child: Text(errorMessage!));
     }
     if (imageBytes != null) {
-      return Container(
-        padding: EdgeInsets.all(2.sp),
-        child: Image.memory(
-          imageBytes!,
-          fit: BoxFit.contain,
-          height: widget.height ?? 65.h,
-          width: widget.height ?? 65.w,
-          errorBuilder: (context, error, stackTrace) {
-            return Center(
-              child: Text('Error displaying image'),
-            );
-          },
-        ),
+      return Image.memory(
+        imageBytes!,
+        fit: BoxFit.contain,
+        height: widget.height ?? 65.h,
+        width: widget.height ?? 65.w,
+        errorBuilder: (context, error, stackTrace) {
+          return Center(
+            child: Text('Error displaying image'),
+          );
+        },
       );
     }
     return Center(child: Text('No image to display'));

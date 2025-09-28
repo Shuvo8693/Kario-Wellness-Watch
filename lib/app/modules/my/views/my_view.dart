@@ -110,12 +110,12 @@ class MyView extends StatelessWidget {
               Get.toNamed(Routes.PROFILESHOW);
             },
           ),
-          _buildDivider(),
-          MyMenuItem(
-            icon: Icons.settings_outlined,
-            title: 'System settings',
-            onTap: () {},
-          ),
+          // _buildDivider(),
+          // MyMenuItem(
+          //   icon: Icons.settings_outlined,
+          //   title: 'System settings',
+          //   onTap: () {},
+          // ),
           _buildDivider(),
           MyMenuItem(
             icon: Icons.lock_outline,
