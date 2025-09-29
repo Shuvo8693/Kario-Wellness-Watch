@@ -18,6 +18,7 @@ abstract class Routes {
   static const PROFILESHOW = _Paths.PROFILESHOW;
   static const PERMISSION = _Paths.PERMISSION;
   static const NOTIFICATION = _Paths.NOTIFICATION;
+  static const DEVICE_SETTINGS = _Paths.DEVICE_SETTINGS;
 }
 
 abstract class _Paths {
@@ -37,4 +38,5 @@ abstract class _Paths {
   static const PROFILESHOW = '/profile_show';
   static const PERMISSION = '/permission';
   static const NOTIFICATION = '/notification';
+  static const DEVICE_SETTINGS = '/device-settings';
 }

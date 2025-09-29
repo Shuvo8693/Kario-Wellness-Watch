@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/sign_in_view.dart';
 import '../modules/auth/views/signup_view.dart';
+import '../modules/device_settings/bindings/device_settings_binding.dart';
+import '../modules/device_settings/views/device_settings_view.dart';
 import '../modules/devices/bindings/devices_binding.dart';
 import '../modules/devices/views/devices_view.dart';
 import '../modules/exercise/bindings/exercise_binding.dart';
@@ -106,6 +108,11 @@ class AppPages {
       name: _Paths.NOTIFICATION,
       page: () => const NotificationView(),
       binding: NotificationBinding(),
+    ),
+    GetPage(
+      name: _Paths.DEVICE_SETTINGS,
+      page: () => const DeviceSettingsView(),
+      binding: DeviceSettingsBinding(),
     ),
   ];
 }

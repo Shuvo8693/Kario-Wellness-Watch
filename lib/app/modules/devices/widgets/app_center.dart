@@ -79,8 +79,10 @@ class AppCenter extends StatelessWidget {
           case 'Notifications':
             Get.toNamed(Routes.NOTIFICATION);
             break;
+            case 'Device settings':
+            Get.toNamed(Routes.DEVICE_SETTINGS);
+            break;
         }
-
       },
       child: Column(
         children: [
