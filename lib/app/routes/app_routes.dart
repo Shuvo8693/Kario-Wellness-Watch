@@ -17,6 +17,7 @@ abstract class Routes {
   static const PROFILEEDIT = _Paths.PROFILEEDIT;
   static const PROFILESHOW = _Paths.PROFILESHOW;
   static const PERMISSION = _Paths.PERMISSION;
+  static const NOTIFICATION = _Paths.NOTIFICATION;
 }
 
 abstract class _Paths {
@@ -35,4 +36,5 @@ abstract class _Paths {
   static const PROFILEEDIT = '/profile_edit';
   static const PROFILESHOW = '/profile_show';
   static const PERMISSION = '/permission';
+  static const NOTIFICATION = '/notification';
 }

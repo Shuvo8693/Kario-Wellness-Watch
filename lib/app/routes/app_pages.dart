@@ -1,11 +1,8 @@
 import 'package:get/get.dart';
-import 'package:kario_wellness_watch/app/modules/auth/views/signup_view.dart';
-import 'package:kario_wellness_watch/app/modules/my/views/permission_screen.dart';
-import 'package:kario_wellness_watch/app/modules/my/views/profile_edit_view.dart';
-import 'package:kario_wellness_watch/app/modules/my/views/profile_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/sign_in_view.dart';
+import '../modules/auth/views/signup_view.dart';
 import '../modules/devices/bindings/devices_binding.dart';
 import '../modules/devices/views/devices_view.dart';
 import '../modules/exercise/bindings/exercise_binding.dart';
@@ -19,6 +16,11 @@ import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/my/bindings/my_binding.dart';
 import '../modules/my/views/my_view.dart';
+import '../modules/my/views/permission_screen.dart';
+import '../modules/my/views/profile_edit_view.dart';
+import '../modules/my/views/profile_view.dart';
+import '../modules/notification/bindings/notification_binding.dart';
+import '../modules/notification/views/notification_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 
@@ -95,11 +97,15 @@ class AppPages {
       page: () => const SignInView(),
       binding: AuthBinding(),
     ),
-
     GetPage(
       name: _Paths.SIGNUP,
-      page: () =>  SignUpScreen(),
+      page: () => SignUpScreen(),
       binding: AuthBinding(),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATION,
+      page: () => const NotificationView(),
+      binding: NotificationBinding(),
     ),
   ];
 }

@@ -58,7 +58,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: _buildLeading(context),
       backgroundColor: transparent
           ? Colors.transparent
-          : (backgroundColor ?? AppColors.primaryColor),
+          : (backgroundColor ?? AppColors.scaffoldBgColor),
       foregroundColor: foregroundColor,
       elevation: transparent ? 0 : elevation,
       centerTitle: centerTitle,

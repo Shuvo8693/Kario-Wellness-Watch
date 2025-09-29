@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:kario_wellness_watch/app/routes/app_pages.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 
 class AppCenter extends StatelessWidget {
@@ -73,6 +75,12 @@ class AppCenter extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Handle app item tap
+        switch(item['label']){
+          case 'Notifications':
+            Get.toNamed(Routes.NOTIFICATION);
+            break;
+        }
+
       },
       child: Column(
         children: [
