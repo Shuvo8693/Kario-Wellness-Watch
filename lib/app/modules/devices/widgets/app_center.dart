@@ -82,6 +82,9 @@ class AppCenter extends StatelessWidget {
             case 'Device settings':
             Get.toNamed(Routes.DEVICE_SETTINGS);
             break;
+            case 'Alarm Clock':
+            Get.toNamed(Routes.ALARM);
+            break;
         }
       },
       child: Column(

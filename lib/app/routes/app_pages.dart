@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/alarm/bindings/alarm_binding.dart';
+import '../modules/alarm/views/alarm_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/sign_in_view.dart';
 import '../modules/auth/views/signup_view.dart';
@@ -113,6 +115,11 @@ class AppPages {
       name: _Paths.DEVICE_SETTINGS,
       page: () => const DeviceSettingsView(),
       binding: DeviceSettingsBinding(),
+    ),
+    GetPage(
+      name: _Paths.ALARM,
+      page: () => const AlarmView(),
+      binding: AlarmBinding(),
     ),
   ];
 }
