@@ -16,6 +16,8 @@ import '../modules/gender_selection/views/age_input_view.dart';
 import '../modules/gender_selection/views/gender_selection_view.dart';
 import '../modules/gender_selection/views/height_input_view.dart';
 import '../modules/gender_selection/views/weight_input_view.dart';
+import '../modules/goals/bindings/goals_binding.dart';
+import '../modules/goals/views/goals_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/my/bindings/my_binding.dart';
@@ -120,6 +122,11 @@ class AppPages {
       name: _Paths.ALARM,
       page: () => const AlarmView(),
       binding: AlarmBinding(),
+    ),
+    GetPage(
+      name: _Paths.GOALS,
+      page: () => const GoalsView(),
+      binding: GoalsBinding(),
     ),
   ];
 }

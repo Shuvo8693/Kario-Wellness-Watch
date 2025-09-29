@@ -20,6 +20,7 @@ abstract class Routes {
   static const NOTIFICATION = _Paths.NOTIFICATION;
   static const DEVICE_SETTINGS = _Paths.DEVICE_SETTINGS;
   static const ALARM = _Paths.ALARM;
+  static const GOALS = _Paths.GOALS;
 }
 
 abstract class _Paths {
@@ -41,4 +42,5 @@ abstract class _Paths {
   static const NOTIFICATION = '/notification';
   static const DEVICE_SETTINGS = '/device-settings';
   static const ALARM = '/alarm';
+  static const GOALS = '/goals';
 }
