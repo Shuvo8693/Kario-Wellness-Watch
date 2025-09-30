@@ -18,6 +18,8 @@ import '../modules/gender_selection/views/height_input_view.dart';
 import '../modules/gender_selection/views/weight_input_view.dart';
 import '../modules/goals/bindings/goals_binding.dart';
 import '../modules/goals/views/goals_view.dart';
+import '../modules/health_metrics/bindings/health_metrics_binding.dart';
+import '../modules/health_metrics/views/health_metrics_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/my/bindings/my_binding.dart';
@@ -134,6 +136,11 @@ class AppPages {
       name: _Paths.SPORTS_MODE,
       page: () => const SportsModeView(),
       binding: SportsModeBinding(),
+    ),
+    GetPage(
+      name: _Paths.HEALTH_METRICS,
+      page: () =>  HealthMetricsView(metricType: HealthMetricType.heartRate,),
+      binding: HealthMetricsBinding(),
     ),
   ];
 }

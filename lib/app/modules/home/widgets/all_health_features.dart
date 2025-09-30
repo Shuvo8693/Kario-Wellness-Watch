@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kario_wellness_watch/app/modules/health_metrics/views/health_metrics_view.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 
 class AllHealthFeatures extends StatelessWidget {
@@ -19,6 +20,11 @@ class AllHealthFeatures extends StatelessWidget {
                 icon: Icons.favorite,
                 iconColor: Colors.red,
                 backgroundColor: Colors.red.withOpacity(0.3),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => HealthMetricsView(metricType: HealthMetricType.heartRate)
+                  ));
+                },
               ),
             ),
             SizedBox(width: 12.w),
@@ -30,6 +36,12 @@ class AllHealthFeatures extends StatelessWidget {
                 icon: Icons.bedtime,
                 iconColor: Color(0xFF9C27B0),
                 backgroundColor: Color(0xFF9C27B0).withOpacity(0.3),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => HealthMetricsView(metricType: HealthMetricType.sleep)
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -45,6 +57,9 @@ class AllHealthFeatures extends StatelessWidget {
                 icon: Icons.sports_gymnastics,
                 iconColor: Color(0xFFFF9800),
                 backgroundColor: Color(0xFFFF9800).withOpacity(0.3),
+                onTap: () {
+
+                },
               ),
             ),
             SizedBox(width: 12.w),
@@ -56,6 +71,7 @@ class AllHealthFeatures extends StatelessWidget {
                 icon: Icons.sentiment_very_satisfied,
                 iconColor: Color(0xFF3F51B5),
                 backgroundColor: Color(0xFF3F51B5).withOpacity(0.3),
+                onTap: () {  },
               ),
             ),
           ],
@@ -71,6 +87,7 @@ class AllHealthFeatures extends StatelessWidget {
                 icon: Icons.monitor_weight,
                 iconColor: Color(0xFF00BCD4),
                 backgroundColor: Color(0xFF00BCD4).withOpacity(0.3),
+                onTap: () {  },
               ),
             ),
             SizedBox(width: 12.w),
@@ -82,6 +99,11 @@ class AllHealthFeatures extends StatelessWidget {
                 icon: Icons.bubble_chart,
                 iconColor: Color(0xFFF44336),
                 backgroundColor: Color(0xFFF44336).withOpacity(0.3),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => HealthMetricsView(metricType: HealthMetricType.bloodOxygen)
+                  ));
+                },
               ),
             ),
           ],
@@ -97,6 +119,7 @@ class AllHealthFeatures extends StatelessWidget {
                 icon: Icons.water_drop,
                 iconColor: Color(0xFFFFEB3B),
                 backgroundColor: Color(0xFFFFEB3B).withOpacity(0.3),
+                onTap: () {  },
               ),
             ),
             SizedBox(width: 12.w),
@@ -108,6 +131,11 @@ class AllHealthFeatures extends StatelessWidget {
                 icon: Icons.thermostat,
                 iconColor: Color(0xFFE91E63),
                 backgroundColor: Color(0xFFE91E63).withOpacity(0.3),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => HealthMetricsView(metricType: HealthMetricType.skinTemperature)
+                  ));
+                },
               ),
             ),
           ],
@@ -123,6 +151,7 @@ class AllHealthFeatures extends StatelessWidget {
                 icon: Icons.monitor_heart,
                 iconColor: Color(0xFFFF5722),
                 backgroundColor: Color(0xFFFF5722).withOpacity(0.3),
+                onTap: () {  },
               ),
             ),
             SizedBox(width: 12.w),
@@ -140,64 +169,68 @@ class AllHealthFeatures extends StatelessWidget {
     required IconData icon,
     required Color iconColor,
     required Color backgroundColor,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: GoogleFontStyles.h6(color: Colors.grey[600]),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: iconColor, size: 18.sp),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          RichText(
-            text: TextSpan(
-              text: value,
-              style: GoogleFontStyles.h4(
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (unit.isNotEmpty) ...[
-                  TextSpan(text: ' '),
-                  TextSpan(
-                    text: unit,
+                Expanded(
+                  child: Text(
+                    title,
                     style: GoogleFontStyles.h6(color: Colors.grey[600]),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
+                ),
+                Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: iconColor, size: 18.sp),
+                ),
               ],
             ),
-          ),
-        ],
+            SizedBox(height: 12.h),
+            RichText(
+              text: TextSpan(
+                text: value,
+                style: GoogleFontStyles.h4(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+                children: [
+                  if (unit.isNotEmpty) ...[
+                    TextSpan(text: ' '),
+                    TextSpan(
+                      text: unit,
+                      style: GoogleFontStyles.h6(color: Colors.grey[600]),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

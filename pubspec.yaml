@@ -61,6 +61,7 @@ dependencies:
   fvm:
   get: ^4.7.2
   alarm: ^5.1.5
+  syncfusion_flutter_charts:
 
 dev_dependencies:
   flutter_test:

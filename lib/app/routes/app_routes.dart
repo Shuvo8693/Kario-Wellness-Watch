@@ -22,6 +22,7 @@ abstract class Routes {
   static const ALARM = _Paths.ALARM;
   static const GOALS = _Paths.GOALS;
   static const SPORTS_MODE = _Paths.SPORTS_MODE;
+  static const HEALTH_METRICS = _Paths.HEALTH_METRICS;
 }
 
 abstract class _Paths {
@@ -45,4 +46,5 @@ abstract class _Paths {
   static const ALARM = '/alarm';
   static const GOALS = '/goals';
   static const SPORTS_MODE = '/sports-mode';
+  static const HEALTH_METRICS = '/health-metrics';
 }
