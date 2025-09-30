@@ -14,9 +14,9 @@ class AppCenter extends StatelessWidget {
       {'icon': Icons.notifications, 'label': 'Notifications', 'color': Colors.green},
       {'icon': Icons.settings, 'label': 'Device settings', 'color': Colors.grey},
       {'icon': Icons.alarm, 'label': 'Alarm Clock', 'color': Colors.grey},
-      {'icon': Icons.cloud_queue, 'label': 'Weather', 'color': Colors.grey},
+      // {'icon': Icons.cloud_queue, 'label': 'Weather', 'color': Colors.grey},
       {'icon': Icons.track_changes, 'label': 'Goals', 'color': Colors.grey},
-      {'icon': Icons.camera_alt, 'label': 'Pictures taking', 'color': Colors.grey},
+      // {'icon': Icons.camera_alt, 'label': 'Pictures taking', 'color': Colors.grey},
       {'icon': Icons.search, 'label': 'Find device', 'color': Colors.grey},
       {'icon': Icons.system_update, 'label': 'Upgrade', 'color': Colors.grey},
       {'icon': Icons.restart_alt, 'label': 'Factory reset', 'color': Colors.grey},
@@ -87,6 +87,9 @@ class AppCenter extends StatelessWidget {
             break;
             case 'Goals':
             Get.toNamed(Routes.GOALS);
+            break;
+            case 'Sports modes':
+            Get.toNamed(Routes.SPORTS_MODE);
             break;
         }
       },

@@ -29,6 +29,8 @@ import '../modules/notification/bindings/notification_binding.dart';
 import '../modules/notification/views/notification_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
+import '../modules/sports_mode/bindings/sports_mode_binding.dart';
+import '../modules/sports_mode/views/sports_mode_view.dart';
 
 part 'app_routes.dart';
 
@@ -127,6 +129,11 @@ class AppPages {
       name: _Paths.GOALS,
       page: () => const GoalsView(),
       binding: GoalsBinding(),
+    ),
+    GetPage(
+      name: _Paths.SPORTS_MODE,
+      page: () => const SportsModeView(),
+      binding: SportsModeBinding(),
     ),
   ];
 }
