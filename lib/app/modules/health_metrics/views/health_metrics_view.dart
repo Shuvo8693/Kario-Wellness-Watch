@@ -40,8 +40,6 @@ class _HealthMetricsViewState extends State<HealthMetricsView> {
 
   HealthMetricConfig get config => _healthMetricsController.getConfig(widget.metricType);
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
