@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:kario_wellness_watch/app/modules/blood_glucose/bindings/blood_glucose_binding.dart';
+import 'package:kario_wellness_watch/app/modules/blood_glucose/views/blood_glucose_view.dart';
 
 import '../modules/alarm/bindings/alarm_binding.dart';
 import '../modules/alarm/views/alarm_view.dart';
@@ -139,8 +141,15 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.HEALTH_METRICS,
-      page: () =>  HealthMetricsView(metricType: HealthMetricType.heartRate,),
+      page: () => HealthMetricsView(
+        metricType: HealthMetricType.heartRate,
+      ),
       binding: HealthMetricsBinding(),
+    ),
+    GetPage(
+      name: _Paths.BLOOD_GLUCOSE,
+      page: () => const BloodGlucoseView(),
+      binding: BloodGlucoseBinding(),
     ),
   ];
 }
