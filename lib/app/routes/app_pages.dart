@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
-import 'package:kario_wellness_watch/app/modules/blood_glucose/bindings/blood_glucose_binding.dart';
-import 'package:kario_wellness_watch/app/modules/blood_glucose/views/blood_glucose_view.dart';
 
 import '../modules/alarm/bindings/alarm_binding.dart';
 import '../modules/alarm/views/alarm_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/sign_in_view.dart';
 import '../modules/auth/views/signup_view.dart';
+import '../modules/blood_glucose/bindings/blood_glucose_binding.dart';
+import '../modules/blood_glucose/views/blood_glucose_view.dart';
 import '../modules/device_settings/bindings/device_settings_binding.dart';
 import '../modules/device_settings/views/device_settings_view.dart';
 import '../modules/devices/bindings/devices_binding.dart';
@@ -35,6 +35,8 @@ import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 import '../modules/sports_mode/bindings/sports_mode_binding.dart';
 import '../modules/sports_mode/views/sports_mode_view.dart';
+import '../modules/weight_analysis/bindings/weight_analysis_binding.dart';
+import '../modules/weight_analysis/views/weight_analysis_view.dart';
 
 part 'app_routes.dart';
 
@@ -150,6 +152,11 @@ class AppPages {
       name: _Paths.BLOOD_GLUCOSE,
       page: () => const BloodGlucoseView(),
       binding: BloodGlucoseBinding(),
+    ),
+    GetPage(
+      name: _Paths.WEIGHT_ANALYSIS,
+      page: () => const WeightAnalysisView(),
+      binding: WeightAnalysisBinding(),
     ),
   ];
 }

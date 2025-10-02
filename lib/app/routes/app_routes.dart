@@ -24,6 +24,7 @@ abstract class Routes {
   static const SPORTS_MODE = _Paths.SPORTS_MODE;
   static const HEALTH_METRICS = _Paths.HEALTH_METRICS;
   static const BOOLD_GLUCOSE = _Paths.BLOOD_GLUCOSE;
+  static const WEIGHT_ANALYSIS = _Paths.WEIGHT_ANALYSIS;
 }
 
 abstract class _Paths {
@@ -49,4 +50,5 @@ abstract class _Paths {
   static const SPORTS_MODE = '/sports-mode';
   static const HEALTH_METRICS = '/health-metrics';
   static const BLOOD_GLUCOSE = '/boold-glucose';
+  static const WEIGHT_ANALYSIS = '/weight-analysis';
 }

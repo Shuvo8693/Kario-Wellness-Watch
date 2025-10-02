@@ -8,9 +8,6 @@ import 'package:kario_wellness_watch/app/modules/blood_glucose/widgets/periodic_
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 import 'package:kario_wellness_watch/common/custom_appbar/custom_appbar.dart';
 import 'package:kario_wellness_watch/common/widgets/custom_button.dart';
-import 'package:kario_wellness_watch/common/widgets/custom_text_field.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class BloodGlucoseView extends StatefulWidget {
   const BloodGlucoseView({super.key});
