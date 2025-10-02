@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kario_wellness_watch/app/modules/blood_glucose/widgets/glucose_chart.dart';
 import 'package:kario_wellness_watch/app/modules/blood_glucose/widgets/manual_recording.dart';
 import 'package:kario_wellness_watch/app/modules/blood_glucose/widgets/periodic_selector.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
@@ -42,189 +43,12 @@ class _BloodGlucoseViewState extends State<BloodGlucoseView> {
               // Period Selector
               PeriodSelector(selectedPeriod: _selectedPeriod),
               // Glucose Meter Gauge
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 16.w),
-                padding: EdgeInsets.all(24.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 220.h,
-                      child: SfRadialGauge(
-                        axes: <RadialAxis>[
-                          RadialAxis(
-                            minimum: 0,
-                            maximum: 200,
-                            startAngle: 180,
-                            endAngle: 0,
-                            showLabels: true,
-                            showTicks: true,
-                            axisLineStyle: AxisLineStyle(
-                              thickness: 0.15,
-                              thicknessUnit: GaugeSizeUnit.factor,
-                              color: Colors.transparent,
-                            ),
-                            pointers: <GaugePointer>[
-                              NeedlePointer(
-                                value: _currentGlucose,
-                                needleColor: Colors.black,
-                                needleStartWidth: 1,
-                                needleEndWidth: 4,
-                                needleLength: 0.7,
-                                knobStyle: KnobStyle(
-                                  color: Colors.black,
-                                  borderColor: Colors.black,
-                                  borderWidth: 0.02,
-                                  knobRadius: 0.05,
-                                ),
-                              ),
-                            ],
-                            ranges: <GaugeRange>[
-                              GaugeRange(
-                                startValue: 0,
-                                endValue: 40,
-                                color: Colors.red,
-                                startWidth: 20,
-                                endWidth: 20,
-                              ),
-                              GaugeRange(
-                                startValue: 40,
-                                endValue: 100,
-                                color: Colors.green,
-                                startWidth: 20,
-                                endWidth: 20,
-                              ),
-                              GaugeRange(
-                                startValue: 100,
-                                endValue: 200,
-                                color: Colors.orange,
-                                startWidth: 20,
-                                endWidth: 20,
-                              ),
-                            ],
-                            annotations: <GaugeAnnotation>[
-                              GaugeAnnotation(
-                                widget: Container(
-                                  width: 100.w,
-                                  height: 100.h,
-                                  decoration: BoxDecoration(
-                                    color: Colors.green.withOpacity(0.2),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      _currentGlucose.toInt().toString(),
-                                      style: GoogleFontStyles.h1(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 40.sp,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                angle: 90,
-                                positionFactor: 0.5,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      "Today's blood glucose assessment",
-                      style: GoogleFontStyles.h6(
-                        color: Colors.black54,
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildLegendItem('Reduced', Colors.red),
-                        SizedBox(width: 24.w),
-                        _buildLegendItem('Normal', Colors.green),
-                        SizedBox(width: 24.w),
-                        _buildLegendItem('Elevated', Colors.orange),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              GlucoseMeterGauge(currentGlucose: _currentGlucose),
 
               SizedBox(height: 16.h),
 
               // Blood Glucose Level Chart
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 16.w),
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Blood glucose level: ${_currentGlucose.toInt()}',
-                      style: GoogleFontStyles.h4(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'mg/dL',
-                      style: GoogleFontStyles.h6(
-                        color: Colors.black54,
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-
-                    // Chart
-                    SizedBox(
-                      height: 180.h,
-                      child: SfCartesianChart(
-                        plotAreaBorderWidth: 0,
-                        primaryXAxis: CategoryAxis(
-                          majorGridLines: MajorGridLines(width: 0),
-                          axisLine: AxisLine(width: 0),
-                        ),
-                        primaryYAxis: NumericAxis(
-                          minimum: 0,
-                          maximum: 180,
-                          interval: 60,
-                          majorGridLines: MajorGridLines(
-                            width: 1,
-                            color: Colors.grey[200],
-                          ),
-                          axisLine: AxisLine(width: 0),
-                        ),
-                        series: [
-                          SplineSeries<ChartData, String>(
-                            dataSource: _glucoseData,
-                            xValueMapper: (ChartData data, _) => data.label,
-                            yValueMapper: (ChartData data, _) => data.value,
-                            color: Colors.green,
-                            width: 2,
-                            markerSettings: MarkerSettings(
-                              isVisible: true,
-                              color: Colors.green,
-                              borderColor: Colors.green,
-                              borderWidth: 2,
-                              height: 8,
-                              width: 8,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              GlucoseChart(currentGlucose: _currentGlucose, glucoseData: _glucoseData),
 
               SizedBox(height: 16.h),
 
@@ -309,6 +133,145 @@ class _BloodGlucoseViewState extends State<BloodGlucoseView> {
     );
   }
 
+
+
+  void _showManualRecordingDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => ManualRecordingDialog(
+        onSave: (value) {
+          setState(() {
+            _currentGlucose = value;
+          });
+        },
+      ),
+    );
+  }
+}
+
+class GlucoseMeterGauge extends StatelessWidget {
+  const GlucoseMeterGauge({
+    super.key,
+    required double currentGlucose,
+  }) : _currentGlucose = currentGlucose;
+
+  final double _currentGlucose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.all(24.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 220.h,
+            child: SfRadialGauge(
+              axes: <RadialAxis>[
+                RadialAxis(
+                  minimum: 0,
+                  maximum: 200,
+                  startAngle: 180,
+                  endAngle: 0,
+                  showLabels: true,
+                  showTicks: true,
+                  axisLineStyle: AxisLineStyle(
+                    thickness: 0.15,
+                    thicknessUnit: GaugeSizeUnit.factor,
+                    color: Colors.transparent,
+                  ),
+                  pointers: <GaugePointer>[
+                    NeedlePointer(
+                      value: _currentGlucose,
+                      needleColor: Colors.black,
+                      needleStartWidth: 1,
+                      needleEndWidth: 4,
+                      needleLength: 0.7,
+                      knobStyle: KnobStyle(
+                        color: Colors.black,
+                        borderColor: Colors.black,
+                        borderWidth: 0.02,
+                        knobRadius: 0.05,
+                      ),
+                    ),
+                  ],
+                  ranges: <GaugeRange>[
+                    GaugeRange(
+                      startValue: 0,
+                      endValue: 40,
+                      color: Colors.red,
+                      startWidth: 20,
+                      endWidth: 20,
+                    ),
+                    GaugeRange(
+                      startValue: 40,
+                      endValue: 100,
+                      color: Colors.green,
+                      startWidth: 20,
+                      endWidth: 20,
+                    ),
+                    GaugeRange(
+                      startValue: 100,
+                      endValue: 200,
+                      color: Colors.orange,
+                      startWidth: 20,
+                      endWidth: 20,
+                    ),
+                  ],
+                  annotations: <GaugeAnnotation>[
+                    GaugeAnnotation(
+                      widget: Container(
+                        width: 100.w,
+                        height: 100.h,
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            _currentGlucose.toInt().toString(),
+                            style: GoogleFontStyles.h1(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 40.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                      angle: 90,
+                      positionFactor: 0.5,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            "Today's blood glucose assessment",
+            style: GoogleFontStyles.h6(
+              color: Colors.black54,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // _buildLegendItem('Reduced', Colors.red),
+              SizedBox(width: 24.w),
+              // _buildLegendItem('Normal', Colors.green),
+              SizedBox(width: 24.w),
+              // _buildLegendItem('Elevated', Colors.orange),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
   Widget _buildLegendItem(String label, Color color) {
     return Row(
       children: [
@@ -330,20 +293,9 @@ class _BloodGlucoseViewState extends State<BloodGlucoseView> {
       ],
     );
   }
-
-  void _showManualRecordingDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => ManualRecordingDialog(
-        onSave: (value) {
-          setState(() {
-            _currentGlucose = value;
-          });
-        },
-      ),
-    );
-  }
 }
+
+
 
 
 
