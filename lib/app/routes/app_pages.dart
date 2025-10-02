@@ -37,6 +37,8 @@ import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 import '../modules/sports_mode/bindings/sports_mode_binding.dart';
 import '../modules/sports_mode/views/sports_mode_view.dart';
+import '../modules/sports_records/bindings/sports_records_binding.dart';
+import '../modules/sports_records/views/sports_records_view.dart';
 import '../modules/weight_analysis/bindings/weight_analysis_binding.dart';
 import '../modules/weight_analysis/views/weight_analysis_view.dart';
 
@@ -164,6 +166,11 @@ class AppPages {
       name: _Paths.HRV,
       page: () => const HrvView(),
       binding: HrvBinding(),
+    ),
+    GetPage(
+      name: _Paths.SPORTS_RECORDS,
+      page: () => const SportsRecordsView(),
+      binding: SportsRecordsBinding(),
     ),
   ];
 }

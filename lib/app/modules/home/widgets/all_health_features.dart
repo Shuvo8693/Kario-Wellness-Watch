@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kario_wellness_watch/app/modules/blood_glucose/views/blood_glucose_view.dart';
 import 'package:kario_wellness_watch/app/modules/health_metrics/views/health_metrics_view.dart';
 import 'package:kario_wellness_watch/app/modules/hrv/views/hrv_view.dart';
+import 'package:kario_wellness_watch/app/modules/sports_records/views/sports_records_view.dart';
 import 'package:kario_wellness_watch/app/modules/weight_analysis/views/weight_analysis_view.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 
@@ -61,7 +62,9 @@ class AllHealthFeatures extends StatelessWidget {
                 iconColor: Color(0xFFFF9800),
                 backgroundColor: Color(0xFFFF9800).withOpacity(0.3),
                 onTap: () {
-
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => SportsRecordsView()
+                  ),);
                 },
               ),
             ),

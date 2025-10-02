@@ -10,7 +10,6 @@ import 'package:kario_wellness_watch/app/modules/hrv/widgets/stress_detection_ca
 import 'package:kario_wellness_watch/app/modules/hrv/widgets/stressdetectionheader_card.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 import 'package:kario_wellness_watch/common/custom_appbar/custom_appbar.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class HrvView extends StatefulWidget {
   const HrvView({super.key});
@@ -43,8 +42,8 @@ class _HrvViewState extends State<HrvView> {
             children: [
               SizedBox(height: 16.h),
 
-              // Stress Detection Header Card
-              StressDetectionHeaderCard(),
+              //--- Stress Detection Header Card ----
+             // StressDetectionHeaderCard(),
 
               SizedBox(height: 8.h),
 

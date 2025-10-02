@@ -26,6 +26,7 @@ abstract class Routes {
   static const BOOLD_GLUCOSE = _Paths.BLOOD_GLUCOSE;
   static const WEIGHT_ANALYSIS = _Paths.WEIGHT_ANALYSIS;
   static const HRV = _Paths.HRV;
+  static const SPORTS_RECORDS = _Paths.SPORTS_RECORDS;
 }
 
 abstract class _Paths {
@@ -53,4 +54,5 @@ abstract class _Paths {
   static const BLOOD_GLUCOSE = '/boold-glucose';
   static const WEIGHT_ANALYSIS = '/weight-analysis';
   static const HRV = '/hrv';
+  static const SPORTS_RECORDS = '/sports-records';
 }
