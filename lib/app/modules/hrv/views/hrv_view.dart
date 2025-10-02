@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kario_wellness_watch/app/modules/blood_glucose/widgets/manual_recording.dart';
 import 'package:kario_wellness_watch/app/modules/blood_glucose/widgets/periodic_selector.dart';
+import 'package:kario_wellness_watch/app/modules/health_metrics/widgets/about_section.dart';
+import 'package:kario_wellness_watch/app/modules/hrv/widgets/about_section.dart';
 import 'package:kario_wellness_watch/app/modules/hrv/widgets/hrv_cart.dart';
+import 'package:kario_wellness_watch/app/modules/hrv/widgets/stress_detection_card.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 import 'package:kario_wellness_watch/common/custom_appbar/custom_appbar.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -147,7 +150,7 @@ class _HrvViewState extends State<HrvView> {
               SizedBox(height: 16.h),
 
               // About Heart Rate
-              AboutSection(),
+              AboutMetricSection(),
 
               SizedBox(height: 20.h),
             ],
@@ -158,120 +161,6 @@ class _HrvViewState extends State<HrvView> {
   }
 }
 
-class StressDetectionCard extends StatefulWidget {
-  const StressDetectionCard({
-    super.key,
-     required this.isExpanded,
-  });
 
-  final bool isExpanded;
 
-  @override
-  State<StressDetectionCard> createState() => _StressDetectionCardState();
-}
 
-class _StressDetectionCardState extends State<StressDetectionCard> {
-   bool _isExpanded = false;
-  @override
-  void initState() {
-    super.initState();
-    _isExpanded = widget.isExpanded;
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: () {
-              setState(() {
-                _isExpanded = !widget.isExpanded;
-              });
-            },
-            child: Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Row(
-                children: [
-                  Text(
-                    'Stress detection',
-                    style: GoogleFontStyles.h4(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Spacer(),
-                  Icon(
-                    _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                    color: Colors.black54,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (_isExpanded)
-            Padding(
-              padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 16.h),
-              child: Text(
-                'Stress detection measures your heart rate variability to assess stress levels throughout the day.',
-                style: GoogleFontStyles.h6(
-                  color: Colors.black54,
-                  height: 1.5,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class AboutSection extends StatelessWidget {
-  const AboutSection({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'About heart rate',
-            style: GoogleFontStyles.h4(
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            'Heart rate is the number of heartbeats per minute, usually expressed as "bpm". It\'s influenced by physical activity, emotions, and medications. Wearing the device to Monitor heart rate helps understand your current status.',
-            style: GoogleFontStyles.h6(
-              color: Colors.black54,
-              height: 1.5,
-            ),
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            'Note: This product is not a medical device, measurement data are only for reference, not intended for medical diagnosis.',
-            style: GoogleFontStyles.h6(
-              color: Colors.black54,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
