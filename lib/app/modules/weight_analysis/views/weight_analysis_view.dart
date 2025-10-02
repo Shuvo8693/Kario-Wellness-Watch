@@ -1,6 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kario_wellness_watch/app/modules/blood_glucose/widgets/periodic_selector.dart';
+import 'package:kario_wellness_watch/app/modules/weight_analysis/widgets/manual_weight_recording_dialouge.dart';
+import 'package:kario_wellness_watch/app/modules/weight_analysis/widgets/weight_analysis_card.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 import 'package:kario_wellness_watch/common/widgets/custom_button.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' hide CornerStyle;
@@ -52,72 +55,7 @@ class _WeightAnalysisViewState extends State<WeightAnalysisView> {
             PeriodSelector(selectedPeriod: _selectedPeriod),
 
             // Weight Analysis Card
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Weight analysis',
-                    style: GoogleFontStyles.h4(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  Row(
-                    children: [
-                      // BMI Section
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _bmi.toString(),
-                            style: GoogleFontStyles.h1(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 32.sp,
-                            ),
-                          ),
-                          Text(
-                            'BMI ↓',
-                            style: GoogleFontStyles.h6(
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 40.w),
-                      // Target Weight Section
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '$_targetWeight lb',
-                            style: GoogleFontStyles.h1(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 32.sp,
-                            ),
-                          ),
-                          Text(
-                            'Should be below',
-                            style: GoogleFontStyles.h6(
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            WeightAnalysisCard(bmi: _bmi, targetWeight: _targetWeight),
 
             // Weight Change Info
             Container(
@@ -369,6 +307,7 @@ class _WeightAnalysisViewState extends State<WeightAnalysisView> {
   }
 }
 
+
 class ChartData {
   final String label;
   final double value;
@@ -376,145 +315,4 @@ class ChartData {
   ChartData(this.label, this.value);
 }
 
-class PeriodSelector extends StatefulWidget {
-  final String selectedPeriod;
 
-  const PeriodSelector({
-    super.key,
-    required this.selectedPeriod,
-  });
-
-  @override
-  State<PeriodSelector> createState() => _PeriodSelectorState();
-}
-
-class _PeriodSelectorState extends State<PeriodSelector> {
-  late String _selectedPeriod;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedPeriod = widget.selectedPeriod;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(16.w),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Row(
-        children: ['Day', 'Week', 'Month'].map((period) {
-          final isSelected = _selectedPeriod == period;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => setState(() => _selectedPeriod = period),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 8.h),
-                decoration: BoxDecoration(
-                  color: isSelected ? Colors.grey[300] : Colors.transparent,
-                  borderRadius: BorderRadius.circular(6.r),
-                ),
-                child: Text(
-                  period,
-                  textAlign: TextAlign.center,
-                  style: GoogleFontStyles.h5(
-                    color: Colors.black87,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-class ManualWeightRecordingDialog extends StatefulWidget {
-  final Function(double) onSave;
-
-  const ManualWeightRecordingDialog({super.key, required this.onSave});
-
-  @override
-  State<ManualWeightRecordingDialog> createState() => _ManualWeightRecordingDialogState();
-}
-
-class _ManualWeightRecordingDialogState extends State<ManualWeightRecordingDialog> {
-  final TextEditingController _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Manual Recording',
-              style: GoogleFontStyles.h3(
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 20.h),
-            TextField(
-              controller: _controller,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(
-                labelText: 'Weight (lb)',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                  borderSide: BorderSide(color: Colors.cyan, width: 2),
-                ),
-              ),
-            ),
-            SizedBox(height: 20.h),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    text: 'Cancel',
-                    onTap: () => Navigator.pop(context),
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: CustomButton(
-                    text: 'Save',
-                    onTap: () {
-                      final value = double.tryParse(_controller.text);
-                      if (value != null) {
-                        widget.onSave(value);
-                        Navigator.pop(context);
-                      }
-                    },
-
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

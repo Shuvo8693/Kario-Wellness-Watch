@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kario_wellness_watch/app/modules/blood_glucose/views/blood_glucose_view.dart';
 import 'package:kario_wellness_watch/app/modules/health_metrics/views/health_metrics_view.dart';
+import 'package:kario_wellness_watch/app/modules/weight_analysis/views/weight_analysis_view.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 
 class AllHealthFeatures extends StatelessWidget {
@@ -88,7 +89,11 @@ class AllHealthFeatures extends StatelessWidget {
                 icon: Icons.monitor_weight,
                 iconColor: Color(0xFF00BCD4),
                 backgroundColor: Color(0xFF00BCD4).withOpacity(0.3),
-                onTap: () {  },
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => WeightAnalysisView()
+                  ));
+                },
               ),
             ),
             SizedBox(width: 12.w),

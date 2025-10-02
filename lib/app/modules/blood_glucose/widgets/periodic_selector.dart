@@ -3,10 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 
 class PeriodSelector extends StatefulWidget {
-  late  String selectedPeriod;
-  PeriodSelector({
+  final String selectedPeriod;
+
+  const PeriodSelector({
     super.key,
-    required this.selectedPeriod ,
+    required this.selectedPeriod,
   });
 
   @override
@@ -14,6 +15,13 @@ class PeriodSelector extends StatefulWidget {
 }
 
 class _PeriodSelectorState extends State<PeriodSelector> {
+  late String _selectedPeriod;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedPeriod = widget.selectedPeriod;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +34,10 @@ class _PeriodSelectorState extends State<PeriodSelector> {
       ),
       child: Row(
         children: ['Day', 'Week', 'Month'].map((period) {
-          final isSelected = widget.selectedPeriod == period;
+          final isSelected = _selectedPeriod == period;
           return Expanded(
             child: GestureDetector(
-              onTap: () => setState(() => widget.selectedPeriod = period),
+              onTap: () => setState(() => _selectedPeriod = period),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 decoration: BoxDecoration(
