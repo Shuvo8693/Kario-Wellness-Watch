@@ -7,6 +7,7 @@ import 'package:kario_wellness_watch/app/modules/health_metrics/widgets/about_se
 import 'package:kario_wellness_watch/app/modules/hrv/widgets/about_section.dart';
 import 'package:kario_wellness_watch/app/modules/hrv/widgets/hrv_cart.dart';
 import 'package:kario_wellness_watch/app/modules/hrv/widgets/stress_detection_card.dart';
+import 'package:kario_wellness_watch/app/modules/hrv/widgets/stressdetectionheader_card.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 import 'package:kario_wellness_watch/common/custom_appbar/custom_appbar.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -19,9 +20,9 @@ class HrvView extends StatefulWidget {
 }
 
 class _HrvViewState extends State<HrvView> {
-  String _selectedPeriod = 'Day';
+  final String _selectedPeriod = 'Day';
   final int _currentStressLevel = 40;
-  bool _isExpanded = false;
+  final bool _isExpanded = false;
 
   final List<ChartData> _stressData = [
     ChartData('00:00', 0),
@@ -43,51 +44,7 @@ class _HrvViewState extends State<HrvView> {
               SizedBox(height: 16.h),
 
               // Stress Detection Header Card
-              GestureDetector(
-                onTap: () {
-                  // Navigate to stress detection detail
-                },
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16.w),
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFD4F4DD),
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 32.w,
-                        height: 32.h,
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.favorite,
-                          color: Colors.white,
-                          size: 18.sp,
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: Text(
-                          'Stress detection',
-                          style: GoogleFontStyles.h4(
-                            color: Colors.green[700],
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.green[700],
-                        size: 20.sp,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              StressDetectionHeaderCard(),
 
               SizedBox(height: 8.h),
 
@@ -160,6 +117,8 @@ class _HrvViewState extends State<HrvView> {
     );
   }
 }
+
+
 
 
 
