@@ -34,7 +34,7 @@ class WeightChangeGauge extends StatelessWidget {
 
           // Weight Gauge
           SizedBox(
-            height: 180.h,
+            height: 250.h,
             child: SfRadialGauge(
               axes: <RadialAxis>[
                 RadialAxis(

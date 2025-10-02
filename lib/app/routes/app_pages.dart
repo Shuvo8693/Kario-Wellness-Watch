@@ -24,6 +24,8 @@ import '../modules/health_metrics/bindings/health_metrics_binding.dart';
 import '../modules/health_metrics/views/health_metrics_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/hrv/bindings/hrv_binding.dart';
+import '../modules/hrv/views/hrv_view.dart';
 import '../modules/my/bindings/my_binding.dart';
 import '../modules/my/views/my_view.dart';
 import '../modules/my/views/permission_screen.dart';
@@ -157,6 +159,11 @@ class AppPages {
       name: _Paths.WEIGHT_ANALYSIS,
       page: () => const WeightAnalysisView(),
       binding: WeightAnalysisBinding(),
+    ),
+    GetPage(
+      name: _Paths.HRV,
+      page: () => const HrvView(),
+      binding: HrvBinding(),
     ),
   ];
 }
