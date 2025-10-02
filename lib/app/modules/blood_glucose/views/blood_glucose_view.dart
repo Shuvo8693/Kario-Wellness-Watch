@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kario_wellness_watch/app/modules/blood_glucose/widgets/manual_recording.dart';
+import 'package:kario_wellness_watch/app/modules/blood_glucose/widgets/periodic_selector.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 import 'package:kario_wellness_watch/common/custom_appbar/custom_appbar.dart';
 import 'package:kario_wellness_watch/common/widgets/custom_button.dart';
@@ -343,130 +345,5 @@ class _BloodGlucoseViewState extends State<BloodGlucoseView> {
   }
 }
 
-class PeriodSelector extends StatefulWidget {
-  late  String selectedPeriod;
-    PeriodSelector({
-    super.key,
-       required this.selectedPeriod ,
-  });
 
-  @override
-  State<PeriodSelector> createState() => _PeriodSelectorState();
-}
 
-class _PeriodSelectorState extends State<PeriodSelector> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(16.w),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Row(
-        children: ['Day', 'Week', 'Month'].map((period) {
-          final isSelected = widget.selectedPeriod == period;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => setState(() => widget.selectedPeriod = period),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 8.h),
-                decoration: BoxDecoration(
-                  color: isSelected ? Colors.grey[300] : Colors.transparent,
-                  borderRadius: BorderRadius.circular(6.r),
-                ),
-                child: Text(
-                  period,
-                  textAlign: TextAlign.center,
-                  style: GoogleFontStyles.h5(
-                    color: Colors.black87,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-class ChartData {
-  final String label;
-  final double value;
-
-  ChartData(this.label, this.value);
-}
-
-class ManualRecordingDialog extends StatefulWidget {
-  final Function(double) onSave;
-
-  const ManualRecordingDialog({super.key, required this.onSave});
-
-  @override
-  State<ManualRecordingDialog> createState() => _ManualRecordingDialogState();
-}
-
-class _ManualRecordingDialogState extends State<ManualRecordingDialog> {
-  final TextEditingController _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Manual Recording',
-              style: GoogleFontStyles.h3(
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 20.h),
-            CustomTextField(controller: _controller,labelText: 'Blood glucose level (mg/dL)',),
-            SizedBox(height: 20.h),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    text: 'Cancel',
-                    onTap: () => Navigator.pop(context),
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: CustomButton(
-                    text: 'Save',
-                    onTap: () {
-                      final value = double.tryParse(_controller.text);
-                      if (value != null) {
-                        widget.onSave(value);
-                        Navigator.pop(context);
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
