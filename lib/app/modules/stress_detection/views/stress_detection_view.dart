@@ -167,11 +167,11 @@ class _StressDetectionViewState extends State<StressDetectionView> {
             children: [
               // Progress Circle
               SizedBox(
-                width: 200.w,
+                width: 200.h,
                 height: 200.h,
                 child: CircularProgressIndicator(
                   value: (_countdown / 56),
-                  strokeWidth: 12,
+                  strokeWidth: 18.w,
                   backgroundColor: Colors.grey[300],
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.cyan),
                 ),
@@ -217,40 +217,31 @@ class _StressDetectionViewState extends State<StressDetectionView> {
       children: [
         Spacer(),
 
-        // Hexagon with Stress Level
-        CustomPaint(
-          size: Size(200.h, 200.h),
-          painter: HexagonPainter(),
-          child: Container(
-            width: 200.h,
-            height: 200.h,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Current stress',
-                  style: GoogleFontStyles.h6(
-                    color: Colors.black87,
-                  ),
-                ),
-                Text(
-                  'level',
-                  style: GoogleFontStyles.h6(
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  _stressLevel.toString(),
-                  style: GoogleFontStyles.h1(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 48.sp,
-                  ),
-                ),
-              ],
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Current stress',
+              style: GoogleFontStyles.h6(
+                color: Colors.black87,
+              ),
             ),
-          ),
+            Text(
+              'level',
+              style: GoogleFontStyles.h6(
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              _stressLevel.toString(),
+              style: GoogleFontStyles.h1(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 48.sp,
+              ),
+            ),
+          ],
         ),
 
         SizedBox(height: 40.h),
@@ -282,51 +273,3 @@ class _StressDetectionViewState extends State<StressDetectionView> {
   }
 }
 
-// Custom Painter for Hexagon
-class HexagonPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.cyan
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4;
-
-    final path = Path();
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 20;
-
-    for (int i = 0; i < 6; i++) {
-      final angle = (60 * i - 30) * 3.14159 / 180;
-      final x = center.dx + radius * cos(angle);
-      final y = center.dy + radius * sin(angle);
-
-      if (i == 0) {
-        path.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-      }
-    }
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-
-  double cos(double angle) =>
-      (angle == 0) ? 1.0 :
-      (angle == 1.0472) ? 0.5 :
-      (angle == 2.0944) ? -0.5 :
-      (angle == 3.14159) ? -1.0 :
-      (angle == -2.0944) ? -0.5 :
-      (angle == -1.0472) ? 0.5 : 0.866;
-
-  double sin(double angle) =>
-      (angle == 0) ? 0.0 :
-      (angle == 1.0472) ? 0.866 :
-      (angle == 2.0944) ? 0.866 :
-      (angle == 3.14159) ? 0.0 :
-      (angle == -2.0944) ? -0.866 :
-      (angle == -1.0472) ? -0.866 : 0.5;
-}
