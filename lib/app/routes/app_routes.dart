@@ -27,6 +27,7 @@ abstract class Routes {
   static const WEIGHT_ANALYSIS = _Paths.WEIGHT_ANALYSIS;
   static const HRV = _Paths.HRV;
   static const SPORTS_RECORDS = _Paths.SPORTS_RECORDS;
+  static const STRESS_DETECTION = _Paths.STRESS_DETECTION;
 }
 
 abstract class _Paths {
@@ -55,4 +56,5 @@ abstract class _Paths {
   static const WEIGHT_ANALYSIS = '/weight-analysis';
   static const HRV = '/hrv';
   static const SPORTS_RECORDS = '/sports-records';
+  static const STRESS_DETECTION = '/stress-detection';
 }

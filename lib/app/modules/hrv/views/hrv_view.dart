@@ -43,7 +43,7 @@ class _HrvViewState extends State<HrvView> {
               SizedBox(height: 16.h),
 
               //--- Stress Detection Header Card ----
-             // StressDetectionHeaderCard(),
+              StressDetectionHeaderCard(),
 
               SizedBox(height: 8.h),
 

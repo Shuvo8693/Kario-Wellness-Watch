@@ -39,6 +39,8 @@ import '../modules/sports_mode/bindings/sports_mode_binding.dart';
 import '../modules/sports_mode/views/sports_mode_view.dart';
 import '../modules/sports_records/bindings/sports_records_binding.dart';
 import '../modules/sports_records/views/sports_records_view.dart';
+import '../modules/stress_detection/bindings/stress_detection_binding.dart';
+import '../modules/stress_detection/views/stress_detection_view.dart';
 import '../modules/weight_analysis/bindings/weight_analysis_binding.dart';
 import '../modules/weight_analysis/views/weight_analysis_view.dart';
 
@@ -171,6 +173,11 @@ class AppPages {
       name: _Paths.SPORTS_RECORDS,
       page: () => const SportsRecordsView(),
       binding: SportsRecordsBinding(),
+    ),
+    GetPage(
+      name: _Paths.STRESS_DETECTION,
+      page: () => const StressDetectionView(),
+      binding: StressDetectionBinding(),
     ),
   ];
 }

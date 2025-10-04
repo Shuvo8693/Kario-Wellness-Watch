@@ -1,6 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:kario_wellness_watch/app/routes/app_pages.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 
 class StressDetectionHeaderCard extends StatelessWidget {
@@ -12,7 +15,7 @@ class StressDetectionHeaderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to stress detection detail
+        Get.toNamed(Routes.STRESS_DETECTION);
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w),
