@@ -37,8 +37,21 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/libs']
+        }
+    }
+
+    dependencies {
+
+        implementation fileTree(dir: 'src/main/libs', include: ['*.jar', '*.aar'])
+    }
+
 }
 
 flutter {
     source = "../.."
 }
+

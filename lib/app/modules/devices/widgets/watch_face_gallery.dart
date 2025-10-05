@@ -44,9 +44,7 @@ class WatchFaceGallery extends StatelessWidget {
               ),
             ],
           ),
-
           SizedBox(height: 16.h),
-
           // Watch faces
           SizedBox(
             height: 100.h,
