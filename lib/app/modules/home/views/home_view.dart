@@ -11,10 +11,21 @@ import 'package:kario_wellness_watch/common/app_images/app_svg.dart';
 import 'package:kario_wellness_watch/common/app_text_style/google_app_style.dart';
 import 'package:kario_wellness_watch/common/bottom_menu/bottom_menu..dart';
 import 'package:kario_wellness_watch/common/widgets/custom_button.dart';
+import 'package:kario_wellness_watch/kario_service.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  @override
+  void initState() {
+    super.initState();
+    KarioService.connectToSmartwatch();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +135,6 @@ class HomeView extends StatelessWidget {
       ],
     );
   }
-
 
   Widget _buildEditButton() {
     return Center(

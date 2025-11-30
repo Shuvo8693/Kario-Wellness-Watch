@@ -39,19 +39,33 @@ android {
     }
 
     sourceSets {
-        main {
-            jniLibs.srcDirs = ['src/main/libs']
+        getByName("main") {
+            jniLibs.srcDirs("src/main/libs")
         }
     }
-
-    dependencies {
-
-        implementation fileTree(dir: 'src/main/libs', include: ['*.jar', '*.aar'])
+    lint {
+        baseline = file("lint-baseline.xml")
     }
 
+}
+
+dependencies {
+    // Add this to include .aar and .jar files
+//    implementation(fileTree(mapOf("dir" to "src/main/libs", "include" to listOf("*.jar", "*.aar"))))
+
+    // OR explicitly reference the aar file
+    implementation(files("src/main/libs/bluetoothsdk-release.aar"))
+    implementation(files("src/main/libs/net-release.aar"))
+    implementation(files("src/main/libs/rtk-core-1.2.9.jar"))
+    implementation(files("src/main/libs/rtk-dfu-3.4.2.jar"))
+
+    // Flutter
+    // implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version")
+
+    // Coroutines for async operations
+    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 }
 
 flutter {
     source = "../.."
 }
-

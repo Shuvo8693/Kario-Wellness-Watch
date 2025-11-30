@@ -4,6 +4,9 @@ import 'package:get/get.dart';
 import 'package:kario_wellness_watch/app/routes/app_pages.dart';
 import 'package:kario_wellness_watch/common/app_images/app_svg.dart';
 import 'package:kario_wellness_watch/common/svg_base64/ExtractionBase64Image.dart';
+import 'package:kario_wellness_watch/platfrom_channel_test.dart';
+
+import '../../../../watch_connect_data/permission_wrapper.dart';
 
 
 
@@ -40,7 +43,8 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
     );
 
     _controller.forward().then((v){
-     Get.toNamed(Routes.HOME);
+     // Get.toNamed(Routes.HOME);
+     Navigator.push(context, MaterialPageRoute(builder: (context)=> PermissionWrapper()));
     });
   }
 

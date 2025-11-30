@@ -14,6 +14,18 @@ import 'common/themes/dark_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(ThemeController());
+  print('=== FLUTTER APP STARTING ===');
+
+  const platform = MethodChannel('com.kario.wellness/methods');
+
+  try {
+    print('=== Testing Platform Channel Connection ===');
+     final result =await platform.invokeMethod('isConnected');
+     print(result);
+    print('✅ Platform channel is working!');
+  } catch (e) {
+    print('❌ Platform channel NOT working: $e');
+  }
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
