@@ -3,6 +3,7 @@ package com.example.kario_wellness_watch.channels
 import com.example.kario_wellness_watch.starmax.StarmaxManager
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.util.Calendar
 
 class MethodChannelHandler(
     private val starmaxManager: StarmaxManager
@@ -12,8 +13,8 @@ class MethodChannelHandler(
         when (call.method) {
             // ==================== SCANNING ====================
             "startScan" -> {
-                val success = starmaxManager.startScan()
-                result.success(success)
+                starmaxManager.startScan()
+                result.success(true)
             }
 
             "stopScan" -> {
@@ -25,8 +26,8 @@ class MethodChannelHandler(
             "connect" -> {
                 val address = call.argument<String>("address")
                 if (address != null) {
-                    val success = starmaxManager.connect(address)
-                    result.success(success)
+                    starmaxManager.connect(address)
+                    result.success(true)
                 } else {
                     result.error("INVALID_ARGS", "Device address required", null)
                 }
@@ -40,6 +41,14 @@ class MethodChannelHandler(
             "isConnected" -> {
                 val connected = starmaxManager.isConnected()
                 result.success(connected)
+            }
+
+            // ==================== INITIALIZATION ====================
+            "initializeWatch" -> {
+                starmaxManager.initializeWatch { success ->
+                    // Callback handled via events
+                }
+                result.success(true)
             }
 
             // ==================== PAIRING ====================
@@ -62,7 +71,7 @@ class MethodChannelHandler(
                     val language = call.argument<Int>("language") ?: 2
                     val backlighting = call.argument<Int>("backlighting") ?: 5
                     val screen = call.argument<Int>("screen") ?: 50
-                    val wristUp = call.argument<Boolean>("wristUp") ?: false
+                    val wristUp = call.argument<Int>("wristUp") ?: 1
 
                     starmaxManager.setDeviceState(
                         timeFormat, unitFormat, tempFormat,
@@ -83,27 +92,29 @@ class MethodChannelHandler(
 
             // ==================== CAMERA CONTROL ====================
             "cameraControl" -> {
-                val controlType = call.argument<String>("controlType")
-                if (controlType != null) {
-                    starmaxManager.cameraControl(controlType)
-                    result.success(true)
-                } else {
-                    result.error("INVALID_ARGS", "Control type required", null)
-                }
+                val enter = call.argument<Boolean>("enter") ?: true
+                starmaxManager.cameraControl(enter)
+                result.success(true)
             }
 
             // ==================== PHONE CONTROL ====================
             "phoneControl" -> {
-                val controlType = call.argument<String>("controlType")
-                val number = call.argument<String>("number") ?: ""
-                val isNumber = call.argument<Boolean>("isNumber") ?: true
+                val callerId = call.argument<String>("callerId")
+                val callerName = call.argument<String>("callerName")
+                val action = call.argument<Int>("action") ?: 0
 
-                if (controlType != null) {
-                    starmaxManager.phoneControl(controlType, number, isNumber)
-                    result.success(true)
-                } else {
-                    result.error("INVALID_ARGS", "Control type required", null)
-                }
+                starmaxManager.phoneControl(callerId, callerName, action)
+                result.success(true)
+            }
+
+            // ==================== NOTIFICATIONS ====================
+            "sendNotification" -> {
+                val title = call.argument<String>("title") ?: ""
+                val content = call.argument<String>("content") ?: ""
+                val type = call.argument<Int>("type") ?: 0
+
+                starmaxManager.sendNotification(title, content, type)
+                result.success(true)
             }
 
             // ==================== BATTERY ====================
@@ -125,12 +136,17 @@ class MethodChannelHandler(
             }
 
             // ==================== USER INFO ====================
+            "getUserInfo" -> {
+                starmaxManager.getUserInfo()
+                result.success(true)
+            }
+
             "setUserInfo" -> {
                 try {
                     val sex = call.argument<Int>("sex") ?: 1
                     val age = call.argument<Int>("age") ?: 30
                     val height = call.argument<Int>("height") ?: 170
-                    val weight = call.argument<Int>("weight") ?: 700
+                    val weight = call.argument<Int>("weight") ?: 70
 
                     starmaxManager.setUserInfo(sex, age, height, weight)
                     result.success(true)
@@ -143,6 +159,19 @@ class MethodChannelHandler(
             "getGoals" -> {
                 starmaxManager.getGoals()
                 result.success(true)
+            }
+
+            "setGoals" -> {
+                try {
+                    val steps = call.argument<Int>("steps") ?: 10000
+                    val calories = call.argument<Int>("calories") ?: 500
+                    val distance = call.argument<Int>("distance") ?: 10
+
+                    starmaxManager.setGoals(steps, calories, distance)
+                    result.success(true)
+                } catch (e: Exception) {
+                    result.error("INVALID_ARGS", "Invalid arguments: ${e.message}", null)
+                }
             }
 
             // ==================== HEALTH DATA ====================
@@ -169,10 +198,16 @@ class MethodChannelHandler(
             // ==================== HISTORICAL DATA ====================
             "getHeartRateHistory" -> {
                 try {
-                    val year = call.argument<Int>("year") ?: 2024
-                    val month = call.argument<Int>("month") ?: 1
-                    val day = call.argument<Int>("day") ?: 1
-                    starmaxManager.getHeartRateHistory(year, month, day)
+                    val year = call.argument<Int>("year") ?: Calendar.getInstance().get(Calendar.YEAR)
+                    val month = call.argument<Int>("month") ?: (Calendar.getInstance().get(Calendar.MONTH) + 1)
+                    val day = call.argument<Int>("day") ?: Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+
+                    val calendar = Calendar.getInstance().apply {
+                        set(Calendar.YEAR, year)
+                        set(Calendar.MONTH, month - 1)
+                        set(Calendar.DAY_OF_MONTH, day)
+                    }
+                    starmaxManager.getHeartRateHistory(calendar)
                     result.success(true)
                 } catch (e: Exception) {
                     result.error("INVALID_ARGS", "Invalid arguments: ${e.message}", null)
@@ -181,10 +216,16 @@ class MethodChannelHandler(
 
             "getStepHistory" -> {
                 try {
-                    val year = call.argument<Int>("year") ?: 2024
-                    val month = call.argument<Int>("month") ?: 1
-                    val day = call.argument<Int>("day") ?: 1
-                    starmaxManager.getStepHistory(year, month, day)
+                    val year = call.argument<Int>("year") ?: Calendar.getInstance().get(Calendar.YEAR)
+                    val month = call.argument<Int>("month") ?: (Calendar.getInstance().get(Calendar.MONTH) + 1)
+                    val day = call.argument<Int>("day") ?: Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+
+                    val calendar = Calendar.getInstance().apply {
+                        set(Calendar.YEAR, year)
+                        set(Calendar.MONTH, month - 1)
+                        set(Calendar.DAY_OF_MONTH, day)
+                    }
+                    starmaxManager.getStepHistory(calendar)
                     result.success(true)
                 } catch (e: Exception) {
                     result.error("INVALID_ARGS", "Invalid arguments: ${e.message}", null)
@@ -193,10 +234,16 @@ class MethodChannelHandler(
 
             "getBloodOxygenHistory" -> {
                 try {
-                    val year = call.argument<Int>("year") ?: 2024
-                    val month = call.argument<Int>("month") ?: 1
-                    val day = call.argument<Int>("day") ?: 1
-                    starmaxManager.getBloodOxygenHistory(year, month, day)
+                    val year = call.argument<Int>("year") ?: Calendar.getInstance().get(Calendar.YEAR)
+                    val month = call.argument<Int>("month") ?: (Calendar.getInstance().get(Calendar.MONTH) + 1)
+                    val day = call.argument<Int>("day") ?: Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+
+                    val calendar = Calendar.getInstance().apply {
+                        set(Calendar.YEAR, year)
+                        set(Calendar.MONTH, month - 1)
+                        set(Calendar.DAY_OF_MONTH, day)
+                    }
+                    starmaxManager.getBloodOxygenHistory(calendar)
                     result.success(true)
                 } catch (e: Exception) {
                     result.error("INVALID_ARGS", "Invalid arguments: ${e.message}", null)
@@ -205,10 +252,16 @@ class MethodChannelHandler(
 
             "getBloodPressureHistory" -> {
                 try {
-                    val year = call.argument<Int>("year") ?: 2024
-                    val month = call.argument<Int>("month") ?: 1
-                    val day = call.argument<Int>("day") ?: 1
-                    starmaxManager.getBloodPressureHistory(year, month, day)
+                    val year = call.argument<Int>("year") ?: Calendar.getInstance().get(Calendar.YEAR)
+                    val month = call.argument<Int>("month") ?: (Calendar.getInstance().get(Calendar.MONTH) + 1)
+                    val day = call.argument<Int>("day") ?: Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+
+                    val calendar = Calendar.getInstance().apply {
+                        set(Calendar.YEAR, year)
+                        set(Calendar.MONTH, month - 1)
+                        set(Calendar.DAY_OF_MONTH, day)
+                    }
+                    starmaxManager.getBloodPressureHistory(calendar)
                     result.success(true)
                 } catch (e: Exception) {
                     result.error("INVALID_ARGS", "Invalid arguments: ${e.message}", null)
@@ -217,10 +270,16 @@ class MethodChannelHandler(
 
             "getSleepHistory" -> {
                 try {
-                    val year = call.argument<Int>("year") ?: 2024
-                    val month = call.argument<Int>("month") ?: 1
-                    val day = call.argument<Int>("day") ?: 1
-                    starmaxManager.getSleepHistory(year, month, day)
+                    val year = call.argument<Int>("year") ?: Calendar.getInstance().get(Calendar.YEAR)
+                    val month = call.argument<Int>("month") ?: (Calendar.getInstance().get(Calendar.MONTH) + 1)
+                    val day = call.argument<Int>("day") ?: Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+
+                    val calendar = Calendar.getInstance().apply {
+                        set(Calendar.YEAR, year)
+                        set(Calendar.MONTH, month - 1)
+                        set(Calendar.DAY_OF_MONTH, day)
+                    }
+                    starmaxManager.getSleepHistory(calendar)
                     result.success(true)
                 } catch (e: Exception) {
                     result.error("INVALID_ARGS", "Invalid arguments: ${e.message}", null)
@@ -232,9 +291,35 @@ class MethodChannelHandler(
                 result.success(true)
             }
 
-            // ==================== HEALTH SETTINGS ====================
+            // ==================== HEALTH MONITORING SETTINGS ====================
+            "getHealthMonitoring" -> {
+                starmaxManager.getHealthMonitoring()
+                result.success(true)
+            }
+
+            "setHealthMonitoring" -> {
+                try {
+                    val heartRate = call.argument<Boolean>("heartRate") ?: true
+                    val bloodPressure = call.argument<Boolean>("bloodPressure") ?: true
+                    val bloodOxygen = call.argument<Boolean>("bloodOxygen") ?: true
+                    val pressure = call.argument<Boolean>("pressure") ?: false
+                    val temp = call.argument<Boolean>("temp") ?: false
+                    val bloodSugar = call.argument<Boolean>("bloodSugar") ?: false
+                    val respirationRate = call.argument<Boolean>("respirationRate") ?: false
+
+                    starmaxManager.setHealthMonitoring(
+                        heartRate, bloodPressure, bloodOxygen,
+                        pressure, temp, bloodSugar, respirationRate
+                    )
+                    result.success(true)
+                } catch (e: Exception) {
+                    result.error("INVALID_ARGS", "Invalid arguments: ${e.message}", null)
+                }
+            }
+
+            // Legacy names for backwards compatibility
             "getHealthOpen" -> {
-                starmaxManager.getHealthOpen()
+                starmaxManager.getHealthMonitoring()
                 result.success(true)
             }
 
@@ -243,11 +328,11 @@ class MethodChannelHandler(
                     val heartRate = call.argument<Boolean>("heartRate") ?: true
                     val bloodPressure = call.argument<Boolean>("bloodPressure") ?: true
                     val bloodOxygen = call.argument<Boolean>("bloodOxygen") ?: true
-                    val pressure = call.argument<Boolean>("pressure") ?: true
-                    val temp = call.argument<Boolean>("temp") ?: true
-                    val bloodSugar = call.argument<Boolean>("bloodSugar") ?: true
+                    val pressure = call.argument<Boolean>("pressure") ?: false
+                    val temp = call.argument<Boolean>("temp") ?: false
+                    val bloodSugar = call.argument<Boolean>("bloodSugar") ?: false
 
-                    starmaxManager.setHealthOpen(
+                    starmaxManager.setHealthMonitoring(
                         heartRate, bloodPressure, bloodOxygen,
                         pressure, temp, bloodSugar
                     )
@@ -257,6 +342,7 @@ class MethodChannelHandler(
                 }
             }
 
+            // ==================== HEART RATE CONTROL ====================
             "getHeartRateControl" -> {
                 starmaxManager.getHeartRateControl()
                 result.success(true)
@@ -264,17 +350,58 @@ class MethodChannelHandler(
 
             "setHeartRateControl" -> {
                 try {
-                    val startHour = call.argument<Int>("startHour") ?: 0
-                    val startMinute = call.argument<Int>("startMinute") ?: 0
-                    val endHour = call.argument<Int>("endHour") ?: 23
-                    val endMinute = call.argument<Int>("endMinute") ?: 59
-                    val period = call.argument<Int>("period") ?: 60
-                    val alarmThreshold = call.argument<Int>("alarmThreshold") ?: 100
+                    val enabled = call.argument<Boolean>("enabled") ?: true
+                    val interval = call.argument<Int>("interval") ?: 60
 
-                    starmaxManager.setHeartRateControl(
-                        startHour, startMinute, endHour,
-                        endMinute, period, alarmThreshold
-                    )
+                    starmaxManager.setHeartRateControl(enabled, interval)
+                    result.success(true)
+                } catch (e: Exception) {
+                    result.error("INVALID_ARGS", "Invalid arguments: ${e.message}", null)
+                }
+            }
+
+            // ==================== REAL-TIME MEASUREMENTS ====================
+            "startHeartRateMeasurement" -> {
+                starmaxManager.startHeartRateMeasurement()
+                result.success(true)
+            }
+
+            "stopHeartRateMeasurement" -> {
+                starmaxManager.stopHeartRateMeasurement()
+                result.success(true)
+            }
+
+            "startBloodPressureMeasurement" -> {
+                starmaxManager.startBloodPressureMeasurement()
+                result.success(true)
+            }
+
+            "stopBloodPressureMeasurement" -> {
+                starmaxManager.stopBloodPressureMeasurement()
+                result.success(true)
+            }
+
+            "startBloodOxygenMeasurement" -> {
+                starmaxManager.startBloodOxygenMeasurement()
+                result.success(true)
+            }
+
+            "stopBloodOxygenMeasurement" -> {
+                starmaxManager.stopBloodOxygenMeasurement()
+                result.success(true)
+            }
+
+            // ==================== ALARMS ====================
+            "getAlarms" -> {
+                starmaxManager.getAlarms()
+                result.success(true)
+            }
+
+            "setAlarms" -> {
+                try {
+                    @Suppress("UNCHECKED_CAST")
+                    val alarms = call.argument<List<Map<String, Any>>>("alarms") ?: listOf()
+                    starmaxManager.setAlarms(alarms)
                     result.success(true)
                 } catch (e: Exception) {
                     result.error("INVALID_ARGS", "Invalid arguments: ${e.message}", null)
@@ -282,9 +409,26 @@ class MethodChannelHandler(
             }
 
             // ==================== DEVICE MANAGEMENT ====================
-            "reset" -> {
-                starmaxManager.reset()
+            "resetDevice" -> {
+                starmaxManager.resetDevice()
                 result.success(true)
+            }
+
+            // Legacy name
+            "reset" -> {
+                starmaxManager.resetDevice()
+                result.success(true)
+            }
+
+            // ==================== RAW COMMAND ====================
+            "sendRawCommand" -> {
+                val hex = call.argument<String>("hex")
+                if (hex != null) {
+                    starmaxManager.sendRawCommand(hex)
+                    result.success(true)
+                } else {
+                    result.error("INVALID_ARGS", "Hex string required", null)
+                }
             }
 
             else -> result.notImplemented()

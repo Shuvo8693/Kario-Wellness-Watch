@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_auto_translate/flutter_auto_translate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:kario_wellness_watch/common/themes/light_theme.dart';
@@ -13,6 +14,7 @@ import 'common/themes/dark_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await TranslationService().init();
   Get.put(ThemeController());
   print('=== FLUTTER APP STARTING ===');
 

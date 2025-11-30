@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/services.dart';
 
 /// Represents a discovered BLE device
@@ -28,45 +27,36 @@ class BleDevice {
 
 /// Health data from the watch
 class HealthData {
-  final int? totalSteps;
-  final int? totalCalories;
-  final int? totalDistance;
-  final int? heartRate;
-  final int? bloodOxygen;
-  final int? systolicBP;
-  final int? diastolicBP;
-  final int? pressure;
-  final int? temperature;
-  final int? bloodSugar;
-  final bool? isWearing;
+  final int totalSteps;
+  final int totalCalories;
+  final int totalDistance;
+  final int heartRate;
+  final int bloodOxygen;
+  final int systolicBP;
+  final int diastolicBP;
+  final bool isWearing;
 
   HealthData({
-    this.totalSteps,
-    this.totalCalories,
-    this.totalDistance,
-    this.heartRate,
-    this.bloodOxygen,
-    this.systolicBP,
-    this.diastolicBP,
-    this.pressure,
-    this.temperature,
-    this.bloodSugar,
-    this.isWearing,
+    this.totalSteps = 0,
+    this.totalCalories = 0,
+    this.totalDistance = 0,
+    this.heartRate = 0,
+    this.bloodOxygen = 0,
+    this.systolicBP = 0,
+    this.diastolicBP = 0,
+    this.isWearing = false,
   });
 
   factory HealthData.fromMap(Map<String, dynamic> map) {
     return HealthData(
-      totalSteps: map['total_steps'],
-      totalCalories: map['total_heat'],
-      totalDistance: map['total_distance'],
-      heartRate: map['current_heart_rate'],
-      bloodOxygen: map['current_blood_oxygen'],
-      systolicBP: map['current_ss'],
-      diastolicBP: map['current_fz'],
-      pressure: map['current_pressure'],
-      temperature: map['current_temp'],
-      bloodSugar: map['current_blood_sugar'],
-      isWearing: map['is_wear'] == 1,
+      totalSteps: map['steps'] ?? map['total_steps'] ?? 0,
+      totalCalories: map['calories'] ?? map['total_heat'] ?? 0,
+      totalDistance: map['distance'] ?? map['total_distance'] ?? 0,
+      heartRate: map['heartRate'] ?? map['current_heart_rate'] ?? 0,
+      bloodOxygen: map['bloodOxygen'] ?? map['current_blood_oxygen'] ?? 0,
+      systolicBP: map['bloodPressureHigh'] ?? map['current_ss'] ?? 0,
+      diastolicBP: map['bloodPressureLow'] ?? map['current_fz'] ?? 0,
+      isWearing: (map['heartRate'] ?? 0) > 0, // If HR > 0, watch is being worn
     );
   }
 
@@ -85,8 +75,8 @@ class BatteryInfo {
 
   factory BatteryInfo.fromMap(Map<String, dynamic> map) {
     return BatteryInfo(
-      power: map['power'] ?? 0,
-      isCharging: map['is_charge'] ?? false,
+      power: map['level'] ?? map['power'] ?? 0,
+      isCharging: map['isCharging'] ?? map['is_charge'] ?? false,
     );
   }
 }
@@ -94,23 +84,12 @@ class BatteryInfo {
 /// Device version information
 class DeviceVersion {
   final String version;
-  final String uiVersion;
-  final String model;
-  final int screenType;
 
-  DeviceVersion({
-    required this.version,
-    required this.uiVersion,
-    required this.model,
-    required this.screenType,
-  });
+  DeviceVersion({required this.version});
 
   factory DeviceVersion.fromMap(Map<String, dynamic> map) {
     return DeviceVersion(
       version: map['version'] ?? '',
-      uiVersion: map['ui_version'] ?? '',
-      model: map['model'] ?? '',
-      screenType: map['screen_type'] ?? 0,
     );
   }
 }
@@ -130,6 +109,7 @@ class StarmaxService {
   final _versionController = StreamController<DeviceVersion>.broadcast();
   final _rawDataController = StreamController<Map<String, dynamic>>.broadcast();
   final _errorController = StreamController<String>.broadcast();
+  final _servicesDiscoveredController = StreamController<bool>.broadcast();
 
   StreamSubscription? _eventSubscription;
   bool _isInitialized = false;
@@ -142,6 +122,7 @@ class StarmaxService {
   Stream<DeviceVersion> get onDeviceVersion => _versionController.stream;
   Stream<Map<String, dynamic>> get onRawData => _rawDataController.stream;
   Stream<String> get onError => _errorController.stream;
+  Stream<bool> get onServicesDiscovered => _servicesDiscoveredController.stream;
 
   /// Initialize the service and start listening to events
   Future<void> initialize() async {
@@ -150,6 +131,7 @@ class StarmaxService {
     _eventSubscription = _eventChannel.receiveBroadcastStream().listen(
       _handleEvent,
       onError: (error) {
+        print('Event stream error: $error');
         _errorController.add('Event stream error: $error');
       },
     );
@@ -159,112 +141,134 @@ class StarmaxService {
   }
 
   /// Handle events from the native side
+  /// New format: { "event": "eventName", "data": { ... } }
   void _handleEvent(dynamic event) {
-    if (event is! Map) return;
+    if (event is! Map) {
+      print('Invalid event format: $event');
+      return;
+    }
 
-    final Map<String, dynamic> data = Map<String, dynamic>.from(event);
-    final String type = data['type'] ?? '';
+    final Map<String, dynamic> eventMap = Map<String, dynamic>.from(event);
+    final String eventName = eventMap['event'] ?? '';
+    final Map<String, dynamic> data = eventMap['data'] != null
+        ? Map<String, dynamic>.from(eventMap['data'])
+        : {};
 
-    print('Received event: $type - $data');
+    print('📥 Event: $eventName - $data');
 
-    switch (type) {
-      case 'initialized':
-        print('Starmax SDK initialized');
-        break;
-
+    switch (eventName) {
       case 'deviceFound':
         final device = BleDevice.fromMap(data);
         _deviceFoundController.add(device);
         break;
 
-      case 'connectionStatus':
-        final isConnected = data['status'] == 'connected';
+      case 'connectionState':
+        final isConnected = data['connected'] ?? false;
         _connectionStatusController.add(isConnected);
         break;
 
-    // Handle specific data types from Kotlin
+      case 'servicesDiscovered':
+        final ready = data['ready'] ?? false;
+        _servicesDiscoveredController.add(ready);
+        break;
+
       case 'healthData':
         final healthData = HealthData.fromMap(data);
+        print('📊 Health: steps=${healthData.totalSteps}, hr=${healthData.heartRate}');
         _healthDataController.add(healthData);
         break;
 
       case 'batteryInfo':
         final batteryInfo = BatteryInfo.fromMap(data);
+        print('🔋 Battery: ${batteryInfo.power}%');
         _batteryController.add(batteryInfo);
         break;
 
-      case 'versionInfo':
+      case 'version':
         final version = DeviceVersion.fromMap(data);
         _versionController.add(version);
         break;
 
       case 'pairResult':
-        print('Pairing response: ${data['pair_status']}');
-        _rawDataController.add(data);
+        print('🔐 Pair result: ${data['success']}');
+        _rawDataController.add({'type': 'pairResult', ...data});
         break;
 
-      case 'historyData':
-        _rawDataController.add(data);
+      case 'initializationComplete':
+        print('✅ Watch initialization complete: ${data['success']}');
+        _rawDataController.add({'type': 'initializationComplete', ...data});
         break;
 
-      case 'dataReceived':
-        _handleDataReceived(data);
+      case 'deviceState':
+        _rawDataController.add({'type': 'deviceState', ...data});
+        break;
+
+      case 'commandReply':
+        print('📤 Command reply: ${data['success']}');
+        break;
+
+      case 'goals':
+        _rawDataController.add({'type': 'goals', ...data});
+        break;
+
+      case 'userInfo':
+        _rawDataController.add({'type': 'userInfo', ...data});
+        break;
+
+      case 'alarms':
+        _rawDataController.add({'type': 'alarms', ...data});
+        break;
+
+      case 'healthMonitoringSettings':
+        _rawDataController.add({'type': 'healthMonitoringSettings', ...data});
+        break;
+
+      case 'heartRateHistory':
+      case 'stepHistory':
+      case 'bloodOxygenHistory':
+      case 'bloodPressureHistory':
+      case 'sleepHistory':
+      case 'sportHistory':
+        _rawDataController.add({'type': eventName, ...data});
+        break;
+
+      case 'realTimeMeasure':
+        _rawDataController.add({'type': 'realTimeMeasure', ...data});
+        break;
+
+      case 'heartRateControl':
+        _rawDataController.add({'type': 'heartRateControl', ...data});
+        break;
+
+      case 'findPhone':
+        print('📱 Watch is trying to find phone!');
+        _rawDataController.add({'type': 'findPhone', ...data});
+        break;
+
+      case 'cameraControl':
+        print('📷 Camera control: ${data['action']}');
+        _rawDataController.add({'type': 'cameraControl', ...data});
+        break;
+
+      case 'musicControl':
+        print('🎵 Music control: ${data['action']}');
+        _rawDataController.add({'type': 'musicControl', ...data});
         break;
 
       case 'rawData':
-        print('Raw data received: $data');
+        print('📦 Raw data: $data');
         _rawDataController.add(data);
         break;
 
       case 'error':
         final message = data['message'] ?? 'Unknown error';
+        print('❌ Error: $message');
         _errorController.add(message);
         break;
 
-      case 'command':
-      // Command acknowledgment
-        print('Command sent: ${data['type']}');
-        break;
-
       default:
-        print('Unknown event type: $type');
-        _rawDataController.add(data);
-    }
-  }
-
-  /// Handle data received from watch
-  void _handleDataReceived(Map<String, dynamic> data) {
-    final notifyType = data['notifyType'] ?? '';
-
-    switch (notifyType) {
-      case 'HealthDetail':
-        final healthData = HealthData.fromMap(data);
-        _healthDataController.add(healthData);
-        break;
-
-      case 'Power':
-        final batteryInfo = BatteryInfo.fromMap(data);
-        _batteryController.add(batteryInfo);
-        break;
-
-      case 'Version':
-        final version = DeviceVersion.fromMap(data);
-        _versionController.add(version);
-        break;
-
-      case 'Pair':
-        print('Pairing response: ${data['pair_status']}');
-        _rawDataController.add(data);
-        break;
-
-      case 'GetState':
-      case 'SetState':
-        _rawDataController.add(data);
-        break;
-
-      default:
-      // Forward unknown data types
-        _rawDataController.add(data);
+        print('❓ Unknown event: $eventName');
+        _rawDataController.add({'type': eventName, ...data});
     }
   }
 
@@ -325,7 +329,17 @@ class StarmaxService {
     }
   }
 
-  // ==================== PAIRING ====================
+  // ==================== INITIALIZATION ====================
+
+  /// Full initialization sequence - matches RunmeFit app exactly
+  /// Call this AFTER connection to properly pair with watch
+  Future<void> initializeWatch() async {
+    try {
+      await _methodChannel.invokeMethod('initializeWatch');
+    } catch (e) {
+      _errorController.add('Initialize watch failed: $e');
+    }
+  }
 
   /// Send pair command to device
   Future<void> pair() async {
@@ -405,12 +419,21 @@ class StarmaxService {
     }
   }
 
+  /// Get user info
+  Future<void> getUserInfo() async {
+    try {
+      await _methodChannel.invokeMethod('getUserInfo');
+    } catch (e) {
+      _errorController.add('Get user info failed: $e');
+    }
+  }
+
   /// Set user info
   Future<void> setUserInfo({
     int sex = 1, // 0: Female, 1: Male
     int age = 30,
     int height = 170, // in cm
-    int weight = 700, // in 0.1kg (700 = 70.0kg)
+    int weight = 70, // in kg
   }) async {
     try {
       await _methodChannel.invokeMethod('setUserInfo', {
@@ -433,6 +456,23 @@ class StarmaxService {
     }
   }
 
+  /// Set daily goals
+  Future<void> setGoals({
+    int steps = 10000,
+    int calories = 500,
+    int distance = 10, // in km
+  }) async {
+    try {
+      await _methodChannel.invokeMethod('setGoals', {
+        'steps': steps,
+        'calories': calories,
+        'distance': distance,
+      });
+    } catch (e) {
+      _errorController.add('Set goals failed: $e');
+    }
+  }
+
   /// Get device state
   Future<void> getDeviceState() async {
     try {
@@ -450,7 +490,7 @@ class StarmaxService {
     int language = 2, // 2: English
     int backlighting = 5, // seconds
     int screen = 50, // brightness percentage
-    bool wristUp = true, // raise to wake
+    int wristUp = 1, // 1: enabled, 0: disabled
   }) async {
     try {
       await _methodChannel.invokeMethod('setDeviceState', {
@@ -479,31 +519,207 @@ class StarmaxService {
   }
 
   /// Camera control
-  Future<void> cameraControl(String controlType) async {
-    // controlType: "cameraIn", "cameraExit", "takePhoto"
+  Future<void> cameraControl({bool enter = true}) async {
     try {
       await _methodChannel.invokeMethod('cameraControl', {
-        'controlType': controlType,
+        'enter': enter,
       });
     } catch (e) {
       _errorController.add('Camera control failed: $e');
     }
   }
 
-  /// Phone control (for incoming calls)
-  Future<void> phoneControl({
-    required String controlType, // "hangUp", "answer", "incoming", "exit"
-    String number = '',
-    bool isNumber = true,
+  /// Send notification to watch
+  Future<void> sendNotification({
+    required String title,
+    required String content,
+    int type = 0, // 0: SMS, 1: Call, 2: WhatsApp, etc.
   }) async {
     try {
-      await _methodChannel.invokeMethod('phoneControl', {
-        'controlType': controlType,
-        'number': number,
-        'isNumber': isNumber,
+      await _methodChannel.invokeMethod('sendNotification', {
+        'title': title,
+        'content': content,
+        'type': type,
       });
     } catch (e) {
-      _errorController.add('Phone control failed: $e');
+      _errorController.add('Send notification failed: $e');
+    }
+  }
+
+  /// Reset device
+  Future<void> resetDevice() async {
+    try {
+      await _methodChannel.invokeMethod('resetDevice');
+    } catch (e) {
+      _errorController.add('Reset device failed: $e');
+    }
+  }
+
+  // ==================== HEALTH MONITORING ====================
+
+  /// Get health monitoring settings
+  Future<void> getHealthMonitoring() async {
+    try {
+      await _methodChannel.invokeMethod('getHealthMonitoring');
+    } catch (e) {
+      _errorController.add('Get health monitoring failed: $e');
+    }
+  }
+
+  /// Set health monitoring settings
+  Future<void> setHealthMonitoring({
+    bool heartRate = true,
+    bool bloodPressure = true,
+    bool bloodOxygen = true,
+  }) async {
+    try {
+      await _methodChannel.invokeMethod('setHealthMonitoring', {
+        'heartRate': heartRate,
+        'bloodPressure': bloodPressure,
+        'bloodOxygen': bloodOxygen,
+      });
+    } catch (e) {
+      _errorController.add('Set health monitoring failed: $e');
+    }
+  }
+
+  // ==================== REAL-TIME MEASUREMENTS ====================
+
+  /// Start real-time heart rate measurement
+  Future<void> startHeartRateMeasurement() async {
+    try {
+      await _methodChannel.invokeMethod('startHeartRateMeasurement');
+    } catch (e) {
+      _errorController.add('Start HR measurement failed: $e');
+    }
+  }
+
+  /// Stop real-time heart rate measurement
+  Future<void> stopHeartRateMeasurement() async {
+    try {
+      await _methodChannel.invokeMethod('stopHeartRateMeasurement');
+    } catch (e) {
+      _errorController.add('Stop HR measurement failed: $e');
+    }
+  }
+
+  /// Start blood pressure measurement
+  Future<void> startBloodPressureMeasurement() async {
+    try {
+      await _methodChannel.invokeMethod('startBloodPressureMeasurement');
+    } catch (e) {
+      _errorController.add('Start BP measurement failed: $e');
+    }
+  }
+
+  /// Stop blood pressure measurement
+  Future<void> stopBloodPressureMeasurement() async {
+    try {
+      await _methodChannel.invokeMethod('stopBloodPressureMeasurement');
+    } catch (e) {
+      _errorController.add('Stop BP measurement failed: $e');
+    }
+  }
+
+  /// Start blood oxygen measurement
+  Future<void> startBloodOxygenMeasurement() async {
+    try {
+      await _methodChannel.invokeMethod('startBloodOxygenMeasurement');
+    } catch (e) {
+      _errorController.add('Start SpO2 measurement failed: $e');
+    }
+  }
+
+  /// Stop blood oxygen measurement
+  Future<void> stopBloodOxygenMeasurement() async {
+    try {
+      await _methodChannel.invokeMethod('stopBloodOxygenMeasurement');
+    } catch (e) {
+      _errorController.add('Stop SpO2 measurement failed: $e');
+    }
+  }
+
+  // ==================== HISTORY ====================
+
+  /// Get heart rate history for a specific date
+  Future<void> getHeartRateHistory({
+    required int year,
+    required int month,
+    required int day,
+  }) async {
+    try {
+      await _methodChannel.invokeMethod('getHeartRateHistory', {
+        'year': year,
+        'month': month,
+        'day': day,
+      });
+    } catch (e) {
+      _errorController.add('Get HR history failed: $e');
+    }
+  }
+
+  /// Get step history for a specific date
+  Future<void> getStepHistory({
+    required int year,
+    required int month,
+    required int day,
+  }) async {
+    try {
+      await _methodChannel.invokeMethod('getStepHistory', {
+        'year': year,
+        'month': month,
+        'day': day,
+      });
+    } catch (e) {
+      _errorController.add('Get step history failed: $e');
+    }
+  }
+
+  /// Get sleep history for a specific date
+  Future<void> getSleepHistory({
+    required int year,
+    required int month,
+    required int day,
+  }) async {
+    try {
+      await _methodChannel.invokeMethod('getSleepHistory', {
+        'year': year,
+        'month': month,
+        'day': day,
+      });
+    } catch (e) {
+      _errorController.add('Get sleep history failed: $e');
+    }
+  }
+
+  // ==================== ALARMS ====================
+
+  /// Get alarms
+  Future<void> getAlarms() async {
+    try {
+      await _methodChannel.invokeMethod('getAlarms');
+    } catch (e) {
+      _errorController.add('Get alarms failed: $e');
+    }
+  }
+
+  /// Set alarms
+  Future<void> setAlarms(List<Map<String, dynamic>> alarms) async {
+    try {
+      await _methodChannel.invokeMethod('setAlarms', {'alarms': alarms});
+    } catch (e) {
+      _errorController.add('Set alarms failed: $e');
+    }
+  }
+
+  // ==================== TESTING/DEBUGGING ====================
+
+  /// Send raw hex command for testing
+  Future<void> sendRawCommand(String hex) async {
+    try {
+      await _methodChannel.invokeMethod('sendRawCommand', {'hex': hex});
+    } catch (e) {
+      _errorController.add('Send raw command failed: $e');
     }
   }
 
@@ -519,6 +735,7 @@ class StarmaxService {
     _versionController.close();
     _rawDataController.close();
     _errorController.close();
+    _servicesDiscoveredController.close();
     _isInitialized = false;
   }
 }

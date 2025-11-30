@@ -239,7 +239,17 @@ class StarmaxBleManager(private val context: Context) {
 
             // Check bond state
             val bondState = device.bondState
-            Log.d(TAG, "Device bond state: $bondState")
+            Log.d(TAG, "Device bond state: $bondState (BOND_NONE=10, BOND_BONDING=11, BOND_BONDED=12)")
+
+            // If not bonded, initiate bonding first
+            if (bondState == BluetoothDevice.BOND_NONE) {
+                Log.d(TAG, "Device not bonded - initiating bonding...")
+                val bondResult = device.createBond()
+                Log.d(TAG, "createBond() result: $bondResult")
+
+                // Connection will happen after bonding completes (via bondStateReceiver)
+                // But also try to connect now - some devices bond during connection
+            }
 
             // Use TRANSPORT_LE for BLE devices
             bluetoothGatt = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -643,46 +653,24 @@ class StarmaxBleManager(private val context: Context) {
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
             Log.d(TAG, "onDescriptorWrite - status: $status, descriptor: ${descriptor.uuid}")
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.d(TAG, "Descriptor write successful - notifications enabled")
+                Log.d(TAG, "✓ Descriptor write successful - notifications are now enabled!")
+                Log.d(TAG, "✓ Watch should now send responses to our commands")
 
-                // Try to read the device name to verify communication works
-                val deviceNameChar = gatt.getService(
-                    UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
-                )?.getCharacteristic(
-                    UUID.fromString("00002a00-0000-1000-8000-00805f9b34fb")
-                )
-                if (deviceNameChar != null) {
-                    Log.d(TAG, "Reading device name characteristic to test communication...")
-                    gatt.readCharacteristic(deviceNameChar)
-                }
-
-                // Add a small delay to ensure the watch is ready
+                // Add a delay to ensure the watch is fully ready
+                // This is important - some watches need time after CCCD write
                 mainHandler.postDelayed({
                     isConnected = true
-                    Log.d(TAG, "Connection fully ready - notifying Flutter")
+                    Log.d(TAG, "✓ Connection fully ready - notifying Flutter")
+                    Log.d(TAG, "✓ You can now send commands and receive responses")
                     onConnectionChanged?.invoke(true)
-                }, 500) // 500ms delay
+                }, 800) // 800ms delay - important for watch to be ready
             } else {
-                Log.e(TAG, "Failed to write descriptor: $status")
-                // Try to proceed anyway
-                isConnected = true
-                mainHandler.post {
+                Log.e(TAG, "✗ Failed to write descriptor: $status")
+                // Try to proceed anyway - maybe notifications still work
+                mainHandler.postDelayed({
+                    isConnected = true
                     onConnectionChanged?.invoke(true)
-                }
-            }
-        }
-
-        override fun onCharacteristicRead(
-            gatt: BluetoothGatt,
-            characteristic: BluetoothGattCharacteristic,
-            status: Int
-        ) {
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                val data = characteristic.value
-                Log.d(TAG, "Read characteristic ${characteristic.uuid}: ${data?.let { String(it) } ?: "null"}")
-                Log.d(TAG, "Read raw bytes: ${data?.toHexString()}")
-            } else {
-                Log.e(TAG, "Read characteristic failed: $status")
+                }, 500)
             }
         }
 
@@ -738,6 +726,12 @@ class StarmaxBleManager(private val context: Context) {
             val props = characteristic.properties
             Log.d(TAG, "Enabling notification for ${characteristic.uuid}, properties: $props")
 
+            // Log all descriptors for this characteristic
+            Log.d(TAG, "Descriptors for this characteristic:")
+            characteristic.descriptors.forEach { desc ->
+                Log.d(TAG, "  - Descriptor UUID: ${desc.uuid}")
+            }
+
             // Check if characteristic supports notifications or indications
             val supportsNotify = props and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0
             val supportsIndicate = props and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0
@@ -746,38 +740,73 @@ class StarmaxBleManager(private val context: Context) {
 
             if (!supportsNotify && !supportsIndicate) {
                 Log.w(TAG, "Characteristic doesn't support notifications or indications")
-                // Still try to proceed - some devices work anyway
             }
 
+            // CRITICAL: Set characteristic notification on the local GATT
             val success = gatt.setCharacteristicNotification(characteristic, true)
-            Log.d(TAG, "setCharacteristicNotification: $success")
+            Log.d(TAG, "setCharacteristicNotification result: $success")
 
+            if (!success) {
+                Log.e(TAG, "Failed to set characteristic notification locally!")
+            }
+
+            // Find the CCCD descriptor
             val descriptor = characteristic.getDescriptor(DESCRIPTOR_UUID)
+
             if (descriptor != null) {
-                // Use INDICATE if supported and NOTIFY is not, otherwise use NOTIFY
+                Log.d(TAG, "Found CCCD descriptor: ${descriptor.uuid}")
+
+                // Determine the correct value to write
                 val value = if (supportsIndicate && !supportsNotify) {
-                    Log.d(TAG, "Using ENABLE_INDICATION_VALUE")
+                    Log.d(TAG, "Using ENABLE_INDICATION_VALUE (0x0200)")
                     BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
                 } else {
-                    Log.d(TAG, "Using ENABLE_NOTIFICATION_VALUE")
+                    Log.d(TAG, "Using ENABLE_NOTIFICATION_VALUE (0x0100)")
                     BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
                 }
 
+                // Write the descriptor value
                 descriptor.value = value
                 val writeResult = gatt.writeDescriptor(descriptor)
-                Log.d(TAG, "Writing notification descriptor, result: $writeResult")
+                Log.d(TAG, "writeDescriptor result: $writeResult")
+
+                if (!writeResult) {
+                    Log.e(TAG, "Failed to write descriptor!")
+                    // Try to proceed anyway
+                    isConnected = true
+                    mainHandler.post {
+                        onConnectionChanged?.invoke(true)
+                    }
+                }
+                // If writeResult is true, we wait for onDescriptorWrite callback
+
             } else {
-                Log.w(TAG, "Notification descriptor not found - proceeding without it")
-                // Some devices work without descriptor write
-                // Mark as connected and ready
-                isConnected = true
-                mainHandler.post {
-                    onConnectionChanged?.invoke(true)
+                Log.w(TAG, "CCCD Descriptor (2902) not found!")
+
+                // Try to find any descriptor
+                if (characteristic.descriptors.isNotEmpty()) {
+                    val firstDesc = characteristic.descriptors[0]
+                    Log.d(TAG, "Trying first available descriptor: ${firstDesc.uuid}")
+                    firstDesc.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                    val result = gatt.writeDescriptor(firstDesc)
+                    Log.d(TAG, "Write first descriptor result: $result")
+                    if (!result) {
+                        // Proceed without descriptor
+                        isConnected = true
+                        mainHandler.post {
+                            onConnectionChanged?.invoke(true)
+                        }
+                    }
+                } else {
+                    Log.w(TAG, "No descriptors found - proceeding without descriptor write")
+                    isConnected = true
+                    mainHandler.post {
+                        onConnectionChanged?.invoke(true)
+                    }
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error enabling notification", e)
-            // Still try to mark as connected
+            Log.e(TAG, "Error enabling notification: ${e.message}", e)
             isConnected = true
             mainHandler.post {
                 onConnectionChanged?.invoke(true)

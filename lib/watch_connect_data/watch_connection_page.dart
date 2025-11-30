@@ -5,7 +5,7 @@ import 'starmax_service.dart';
 // ==================== MAIN WATCH PAGE ====================
 
 class WatchDashboardPage extends StatefulWidget {
-  const WatchDashboardPage({Key? key}) : super(key: key);
+  const WatchDashboardPage({super.key});
 
   @override
   State<WatchDashboardPage> createState() => _WatchDashboardPageState();
@@ -19,6 +19,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
   bool _isScanning = false;
   bool _isConnected = false;
   bool _isConnecting = false;
+  bool _isInitializing = false;
   List<BleDevice> _discoveredDevices = [];
   String? _connectedDeviceName;
   String? _connectedDeviceAddress;
@@ -71,11 +72,12 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
             _connectedDeviceAddress = null;
             _healthData = null;
             _batteryInfo = null;
+            _isInitializing = false;
           }
         });
 
         if (connected) {
-          _showSnackBar('✓ Connected successfully!', Colors.green);
+          _showSnackBar('✓ Connected! Initializing...', Colors.green);
           _onConnected();
         } else {
           _showSnackBar('Disconnected from watch', Colors.orange);
@@ -83,9 +85,19 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
       }),
     );
 
+    // Listen to services discovered
+    _subscriptions.add(
+      _starmaxService.onServicesDiscovered.listen((ready) {
+        if (ready) {
+          print('Services discovered and ready');
+        }
+      }),
+    );
+
     // Listen to health data
     _subscriptions.add(
       _starmaxService.onHealthData.listen((data) {
+        print('Health data received: $data');
         setState(() {
           _healthData = data;
         });
@@ -95,6 +107,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
     // Listen to battery info
     _subscriptions.add(
       _starmaxService.onBatteryInfo.listen((info) {
+        print('Battery info received: ${info.power}%');
         setState(() {
           _batteryInfo = info;
         });
@@ -110,41 +123,43 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
       }),
     );
 
+    // Listen to raw data for debugging
+    _subscriptions.add(
+      _starmaxService.onRawData.listen((data) {
+        print('Raw data: $data');
+        if (data['type'] == 'initializationComplete') {
+          setState(() => _isInitializing = false);
+          _showSnackBar('✓ Watch initialized!', Colors.green);
+          _refreshHealthData();
+        }
+      }),
+    );
+
     // Listen to errors
     _subscriptions.add(
       _starmaxService.onError.listen((error) {
         _showSnackBar('Error: $error', Colors.red);
         setState(() {
           _isConnecting = false;
+          _isInitializing = false;
         });
       }),
     );
   }
 
   void _onConnected() async {
-    // Wait for the watch to be fully ready
-    await Future.delayed(const Duration(milliseconds: 1000));
+    setState(() => _isInitializing = true);
 
-    _showSnackBar('Syncing with watch...', Colors.blue);
+    // Wait for BLE stack to stabilize
+    await Future.delayed(const Duration(milliseconds: 500));
 
-    // Send pair command first
-    await _starmaxService.pair();
-    await Future.delayed(const Duration(milliseconds: 800));
+    _showSnackBar('Initializing watch...', Colors.blue);
 
-    // Sync time
-    await _starmaxService.setTime();
-    await Future.delayed(const Duration(milliseconds: 800));
+    // Use the full initialization sequence
+    print('Starting full initialization sequence...');
+    await _starmaxService.initializeWatch();
 
-    // Get battery
-    await _starmaxService.getBattery();
-    await Future.delayed(const Duration(milliseconds: 800));
-
-    // Get version
-    await _starmaxService.getVersion();
-    await Future.delayed(const Duration(milliseconds: 800));
-
-    // Get health data
-    await _starmaxService.getHealthData();
+    // The initialization complete event will trigger data refresh
   }
 
   void _startScan() async {
@@ -159,7 +174,8 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
       setState(() => _isScanning = false);
       _showSnackBar('Failed to start scan. Check permissions.', Colors.red);
     } else {
-      Future.delayed(const Duration(seconds: 10), () {
+      // Auto-stop after 15 seconds
+      Future.delayed(const Duration(seconds: 15), () {
         if (_isScanning && mounted) {
           _stopScan();
         }
@@ -200,13 +216,18 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
   void _refreshHealthData() async {
     _showSnackBar('Refreshing data...', Colors.blue);
     await _starmaxService.getBattery();
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 300));
     await _starmaxService.getHealthData();
   }
 
   void _findWatch() async {
     await _starmaxService.findDevice(isFind: true);
     _showSnackBar('📳 Watch should vibrate now!', Colors.blue);
+
+    // Stop vibration after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      _starmaxService.findDevice(isFind: false);
+    });
   }
 
   void _showSnackBar(String message, Color color) {
@@ -573,6 +594,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
         child: Column(
           children: [
             _buildConnectedHeader(),
+            if (_isInitializing) _buildInitializingCard(),
             const SizedBox(height: 16),
             _buildHealthCards(),
             const SizedBox(height: 16),
@@ -580,6 +602,49 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
             const SizedBox(height: 24),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInitializingCard() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue[50],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.blue[200]!),
+      ),
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Initializing Watch',
+                  style: TextStyle(
+                    color: Colors.blue[700],
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  'Setting up connection with your watch...',
+                  style: TextStyle(
+                    color: Colors.blue[600],
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -802,7 +867,9 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
                 child: _buildHealthCard(
                   icon: Icons.favorite,
                   label: 'Heart Rate',
-                  value: '${_healthData?.heartRate ?? '--'}',
+                  value: _healthData?.heartRate != null && _healthData!.heartRate > 0
+                      ? '${_healthData!.heartRate}'
+                      : '--',
                   unit: 'bpm',
                   color: Colors.red,
                 ),
@@ -816,7 +883,9 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
                 child: _buildHealthCard(
                   icon: Icons.water_drop,
                   label: 'Blood Oxygen',
-                  value: '${_healthData?.bloodOxygen ?? '--'}',
+                  value: _healthData?.bloodOxygen != null && _healthData!.bloodOxygen > 0
+                      ? '${_healthData!.bloodOxygen}'
+                      : '--',
                   unit: '%',
                   color: Colors.cyan,
                 ),
@@ -911,6 +980,11 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
   }
 
   Widget _buildBloodPressureCard() {
+    final hasData = _healthData?.systolicBP != null &&
+        _healthData!.systolicBP > 0 &&
+        _healthData?.diastolicBP != null &&
+        _healthData!.diastolicBP > 0;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -954,7 +1028,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
                 Row(
                   children: [
                     Text(
-                      '${_healthData?.systolicBP ?? '--'}',
+                      hasData ? '${_healthData!.systolicBP}' : '--',
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -968,7 +1042,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
                       ),
                     ),
                     Text(
-                      '${_healthData?.diastolicBP ?? '--'}',
+                      hasData ? '${_healthData!.diastolicBP}' : '--',
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -1044,7 +1118,10 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
                 child: _buildActionButton(
                   icon: Icons.camera_alt,
                   label: 'Camera',
-                  onTap: () => _starmaxService.cameraControl('cameraIn'),
+                  onTap: () {
+                    _starmaxService.cameraControl(enter: true);
+                    _showSnackBar('📷 Camera mode enabled', Colors.blue);
+                  },
                 ),
               ),
               const SizedBox(width: 12),
@@ -1052,15 +1129,69 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
                 child: _buildActionButton(
                   icon: Icons.alarm,
                   label: 'Set Time',
-                  onTap: () => _starmaxService.setTime(),
+                  onTap: () {
+                    _starmaxService.setTime();
+                    _showSnackBar('⏰ Time synced', Colors.blue);
+                  },
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildActionButton(
-                  icon: Icons.person,
-                  label: 'User Info',
-                  onTap: () => _showUserInfoDialog(),
+                  icon: Icons.notifications,
+                  label: 'Test Notif',
+                  onTap: () {
+                    _starmaxService.sendNotification(
+                      title: 'Test',
+                      content: 'Hello from Flutter!',
+                      type: 0,
+                    );
+                    _showSnackBar('📱 Notification sent', Colors.blue);
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildActionButton(
+                  icon: Icons.favorite,
+                  label: 'Measure HR',
+                  onTap: () {
+                    _starmaxService.startHeartRateMeasurement();
+                    _showSnackBar('❤️ Starting heart rate measurement...', Colors.red);
+
+                    // Stop after 30 seconds
+                    Future.delayed(const Duration(seconds: 30), () {
+                      _starmaxService.stopHeartRateMeasurement();
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildActionButton(
+                  icon: Icons.water_drop,
+                  label: 'Measure SpO2',
+                  onTap: () {
+                    _starmaxService.startBloodOxygenMeasurement();
+                    _showSnackBar('💧 Starting blood oxygen measurement...', Colors.cyan);
+
+                    // Stop after 30 seconds
+                    Future.delayed(const Duration(seconds: 30), () {
+                      _starmaxService.stopBloodOxygenMeasurement();
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildActionButton(
+                  icon: Icons.settings,
+                  label: 'Settings',
+                  onTap: _showSettingsDialog,
                 ),
               ),
             ],
@@ -1103,6 +1234,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -1111,29 +1243,88 @@ class _WatchDashboardPageState extends State<WatchDashboardPage>
     );
   }
 
-  void _showUserInfoDialog() {
+  void _showSettingsDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Set User Info'),
-        content: const Text('This will sync your user information to the watch.'),
+        title: const Text('Watch Settings'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Set User Info'),
+              onTap: () {
+                Navigator.pop(context);
+                _starmaxService.setUserInfo(
+                  sex: 1,
+                  age: 30,
+                  height: 170,
+                  weight: 70,
+                );
+                _showSnackBar('👤 User info sent', Colors.green);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.flag),
+              title: const Text('Set Goals'),
+              onTap: () {
+                Navigator.pop(context);
+                _starmaxService.setGoals(
+                  steps: 10000,
+                  calories: 500,
+                  distance: 10,
+                );
+                _showSnackBar('🎯 Goals updated', Colors.green);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text('Get Version'),
+              onTap: () {
+                Navigator.pop(context);
+                _starmaxService.getVersion();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.restore),
+              title: const Text('Reset Device'),
+              onTap: () {
+                Navigator.pop(context);
+                _showResetConfirmDialog();
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showResetConfirmDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Device?'),
+        content: const Text('This will reset your watch to factory settings. Are you sure?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
-              _starmaxService.setUserInfo(
-                sex: 1,
-                age: 30,
-                height: 170,
-                weight: 700,
-              );
               Navigator.pop(context);
-              _showSnackBar('User info sent to watch', Colors.green);
+              _starmaxService.resetDevice();
+              _showSnackBar('⚠️ Reset command sent', Colors.red);
             },
-            child: const Text('Sync'),
+            child: const Text('Reset'),
           ),
         ],
       ),

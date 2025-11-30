@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kario_wellness_watch/platfrom_channel_test.dart';
 import 'package:kario_wellness_watch/watch_connect_data/watch_connection_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 

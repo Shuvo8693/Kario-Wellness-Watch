@@ -66,6 +66,7 @@ dependencies:
 
   # Bluetooth & Health (you have these)
   flutter_blue_plus: ^2.0.0
+  flutter_auto_translate: ^1.0.3
 
   # Data storage
   sqflite: ^2.3.0
