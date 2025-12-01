@@ -51,7 +51,10 @@ android {
 
 dependencies {
     // Add this to include .aar and .jar files
-//    implementation(fileTree(mapOf("dir" to "src/main/libs", "include" to listOf("*.jar", "*.aar"))))
+   implementation(fileTree(mapOf("dir" to "src/main/libs", "include" to listOf("*.jar", "*.aar"))))
+
+    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 
     // OR explicitly reference the aar file
     implementation(files("src/main/libs/bluetoothsdk-release.aar"))
