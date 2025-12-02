@@ -11,7 +11,7 @@ class WatchDashboardPage extends StatefulWidget {
 }
 
 class _WatchDashboardPageState extends State<WatchDashboardPage> {
-  final StarmaxService _watchService = StarmaxService();
+  final StarmaxService starmaxService = StarmaxService();
 
   // Subscriptions
   final List<StreamSubscription> _subscriptions = [];
@@ -50,14 +50,14 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
   }
 
   Future<void> _initializeService() async {
-    await _watchService.initialize();
+    await starmaxService.initialize();
     _setupListeners();
   }
 
   void _setupListeners() {
     // Connection status
     _subscriptions.add(
-      _watchService.onConnectionChanged.listen((connected) {
+      starmaxService.onConnectionChanged.listen((connected) {
         setState(() {
           _isConnected = connected;
           if (!connected) {
@@ -71,7 +71,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
 
     // Device found during scan
     _subscriptions.add(
-      _watchService.onDeviceFound.listen((device) {
+      starmaxService.onDeviceFound.listen((device) {
         setState(() {
           // Avoid duplicates
           if (!_devices.any((d) => d.address == device.address)) {
@@ -83,7 +83,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
 
     // Battery updates
     _subscriptions.add(
-      _watchService.onBatteryUpdate.listen((battery) {
+      starmaxService.onBatteryUpdate.listen((battery) {
         setState(() {
           _batteryLevel = battery.level;
           _isCharging = battery.isCharging;
@@ -93,7 +93,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
 
     // Health data updates
     _subscriptions.add(
-      _watchService.onHealthData.listen((health) {
+      starmaxService.onHealthData.listen((health) {
         setState(() {
           _steps = health.steps;
           _heartRate = health.heartRate;
@@ -109,7 +109,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
 
     // Version info
     _subscriptions.add(
-      _watchService.onVersionInfo.listen((version) {
+      starmaxService.onVersionInfo.listen((version) {
         setState(() {
           _firmware = version.firmware;
         });
@@ -118,7 +118,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
 
     // Initialization progress
     _subscriptions.add(
-      _watchService.onInitProgress.listen((progress) {
+      starmaxService.onInitProgress.listen((progress) {
         setState(() {
           _isInitializing = true;
           _initStep = progress.step;
@@ -135,7 +135,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
 
     // Errors
     _subscriptions.add(
-      _watchService.onError.listen((error) {
+      starmaxService.onError.listen((error) {
         _showSnackBar(error, isError: true);
       }),
     );
@@ -160,11 +160,11 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
     await Future.delayed(const Duration(milliseconds: 500));
 
     try {
-      await _watchService.getBattery();
+      await starmaxService.getBattery();
       await Future.delayed(const Duration(milliseconds: 300));
-      await _watchService.getHealthData();
+      await starmaxService.getHealthData();
       await Future.delayed(const Duration(milliseconds: 300));
-      await _watchService.getVersion();
+      await starmaxService.getVersion();
     } catch (e) {
       print('Error fetching initial data: $e');
     }
@@ -178,7 +178,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
       _devices.clear();
     });
 
-    await _watchService.startScan();
+    await starmaxService.startScan();
 
     // Auto-stop after 15 seconds
     Future.delayed(const Duration(seconds: 15), () {
@@ -189,7 +189,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
   }
 
   Future<void> _stopScan() async {
-    await _watchService.stopScan();
+    await starmaxService.stopScan();
     setState(() => _isScanning = false);
   }
 
@@ -200,27 +200,27 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
     });
 
     await _stopScan();
-    await _watchService.connect(device.address);
+    await starmaxService.connect(device.address);
   }
 
   Future<void> _disconnect() async {
-    await _watchService.disconnect();
+    await starmaxService.disconnect();
   }
 
   Future<void> _syncData() async {
     _showSnackBar('Syncing data...');
-    await _watchService.getHealthData();
+    await starmaxService.getHealthData();
     await Future.delayed(const Duration(milliseconds: 300));
-    await _watchService.getBattery();
+    await starmaxService.getBattery();
   }
 
   Future<void> _findDevice() async {
     _showSnackBar('Finding device...');
-    await _watchService.findDevice(enable: true);
+    await starmaxService.findDevice(enable: true);
 
     // Stop after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
-      _watchService.findDevice(enable: false);
+      starmaxService.findDevice(enable: false);
     });
   }
 
@@ -239,7 +239,7 @@ class _WatchDashboardPageState extends State<WatchDashboardPage> {
     for (var sub in _subscriptions) {
       sub.cancel();
     }
-    _watchService.dispose();
+    starmaxService.dispose();
     super.dispose();
   }
 

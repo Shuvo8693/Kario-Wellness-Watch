@@ -6,9 +6,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.util.Calendar
 
-class MethodChannelHandler(
-    private val starmaxManager: StarmaxManager
-) : MethodChannel.MethodCallHandler {
+class MethodChannelHandler(private val starmaxManager: StarmaxManager) : MethodChannel.MethodCallHandler {
 
     companion object {
         private const val TAG = "MethodChannel"

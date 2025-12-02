@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import io.flutter.plugin.common.EventChannel
+import jdk.internal.net.http.common.Log
 import java.util.Calendar
 
 /**

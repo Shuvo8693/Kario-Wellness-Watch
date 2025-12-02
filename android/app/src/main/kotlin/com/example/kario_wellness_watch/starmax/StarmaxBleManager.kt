@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.ParcelUuid
 import android.util.Log
+import com.sun.tools.javac.util.Log
 import java.util.UUID
 
 /**

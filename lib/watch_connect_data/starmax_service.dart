@@ -8,10 +8,8 @@ import 'package:flutter/services.dart';
 /// - EventChannel: For receiving data/events from the watch
 class StarmaxService {
   // Channel names (must match Android side)
-  static const MethodChannel _methodChannel =
-  MethodChannel('com.kario.wellness/methods');
-  static const EventChannel _eventChannel =
-  EventChannel('com.kario.wellness/events');
+  static const MethodChannel _methodChannel = MethodChannel('com.kario.wellness/methods');
+  static const EventChannel _eventChannel = EventChannel('com.kario.wellness/events');
 
   // Stream subscription
   StreamSubscription? _eventSubscription;
@@ -63,7 +61,7 @@ class StarmaxService {
     print('✅ StarmaxService: Initialized');
   }
 
-  /// Handle events from native code
+  /// Handle events from native code with model class
   void _handleEvent(dynamic eventData) {
     if (eventData == null || eventData is! Map) {
       print('⚠️ StarmaxService: Invalid event data: $eventData');
