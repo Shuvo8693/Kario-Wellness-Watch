@@ -1,3 +1,4 @@
+/*
 package com.example.kario_wellness_watch.starmax
 
 // Enums matching SDK
@@ -66,4 +67,39 @@ data class DailyGoals(
     val steps: Int,
     val heat: Int,
     val distance: Int
+)*/
+
+
+package com.example.kario_wellness_watch.starmax
+
+
+/**
+ * Simple model for a scanned Starmax watch.
+ */
+data class StarmaxDevice(
+    val name: String?,
+    val address: String
+)
+
+/**
+ * Health data model – map of what we read from MapStarmaxNotify.
+ * Add/remove fields as needed.
+ */
+data class StarmaxHealthData(
+    val totalSteps: Int = 0,
+    val totalHeat: Int = 0,
+    val totalDistance: Int = 0,   // km or 0.01km depending on SDK
+    val totalSleepMinutes: Int = 0,
+    val deepSleepMinutes: Int = 0,
+    val lightSleepMinutes: Int = 0,
+    val heartRate: Int = 0,
+    val systolic: Int = 0,
+    val diastolic: Int = 0,
+    val bloodOxygen: Int = 0,
+    val pressure: Int = 0,
+    val met: Int = 0,
+    val mai: Int = 0,
+    val tempTenthC: Int = 0,
+    val bloodSugarTenth: Int = 0,
+    val isWear: Int = -1       // 1 = wearing, 0 = off wrist, -1/255 = invalid
 )

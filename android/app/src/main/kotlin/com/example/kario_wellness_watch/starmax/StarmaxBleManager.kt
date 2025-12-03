@@ -1,4 +1,4 @@
-package com.example.kario_wellness_watch.starmax
+/*package com.example.kario_wellness_watch.starmax
 
 import android.annotation.SuppressLint
 import android.bluetooth.*
@@ -12,8 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.ParcelUuid
 import android.util.Log
-import com.sun.tools.javac.util.Log
-import java.util.UUID
+import java.util.UUID*/
 
 /**
  * StarmaxBleManager - Handles BLE communication with Starmax smartwatch
@@ -21,7 +20,8 @@ import java.util.UUID
  * CRITICAL: Uses Nordic UART Service (NUS) UUIDs - this is what the SDK Demo uses!
  * NOT the AE00 service that was used before.
  */
-@SuppressLint("MissingPermission")
+
+/*@SuppressLint("MissingPermission")
 class StarmaxBleManager(private val context: Context) {
 
     companion object {
@@ -292,9 +292,7 @@ class StarmaxBleManager(private val context: Context) {
 
                 // IMPORTANT: Wait before enabling notifications (from SDK Demo)
                 Log.d(TAG, "Waiting ${NOTIFY_DELAY_MS}ms before enabling notifications...")
-                mainHandler.postDelayed({
-                    enableNotifications()
-                }, NOTIFY_DELAY_MS)
+                mainHandler.postDelayed({ enableNotifications() }, NOTIFY_DELAY_MS)
             } else {
                 Log.e(TAG, "Service discovery failed: $status")
                 onError?.invoke("Service discovery failed: $status")
@@ -484,5 +482,354 @@ class StarmaxBleManager(private val context: Context) {
         } catch (e: Exception) {
             // Receiver might not be registered
         }
+    }
+}*/
+
+package com.example.kario_wellness_watch.starmax
+
+import android.Manifest
+import android.annotation.SuppressLint
+import android.bluetooth.*
+import android.bluetooth.le.BluetoothLeScanner
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
+import android.content.Context
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import androidx.annotation.RequiresPermission
+import com.starmax.bluetoothsdk.MapStarmaxNotify
+import com.starmax.bluetoothsdk.StarmaxSend
+import com.starmax.bluetoothsdk.data.NotifyType
+import java.util.UUID
+
+interface StarmaxBleListener {
+    fun onScanResult(device: StarmaxDevice)
+    fun onScanStopped()
+    fun onConnectionStateChanged(connected: Boolean)
+    fun onHealthDataUpdated(data: StarmaxHealthData)
+    fun onError(message: String, throwable: Throwable? = null)
+}
+
+class StarmaxBleManager(
+    private val context: Context,
+    private val listener: StarmaxBleListener
+) {
+
+    companion object {
+        private const val TAG = "StarmaxBleManager"
+        private const val SCAN_TIMEOUT_MS = 15_000L
+        private const val REQUESTED_MTU = 247
+        private val CCCD_UUID: UUID =
+            UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
+    }
+
+    private val bluetoothManager =
+        context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+    private val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    private var scanner: BluetoothLeScanner? = null
+    private var isScanning = false
+
+    private var gatt: BluetoothGatt? = null
+    private var writeChar: BluetoothGattCharacteristic? = null
+    private var notifyChar: BluetoothGattCharacteristic? = null
+
+    // *** MUST use vendor SDK ***
+    private val sender = StarmaxSend()
+    private val mapNotify = MapStarmaxNotify()   // as in PDF sample
+
+    private var connected = false
+    fun isConnected(): Boolean = connected
+
+    // ------------------------------------------------------------------ Scan
+
+    @SuppressLint("MissingPermission")
+    fun startScan() {
+        if (isScanning) return
+
+        val adapter = bluetoothAdapter
+        if (adapter == null || !adapter.isEnabled) {
+            listener.onError("Bluetooth disabled")
+            return
+        }
+
+        scanner = adapter.bluetoothLeScanner
+        if (scanner == null) {
+            listener.onError("BluetoothLeScanner not available")
+            return
+        }
+
+        isScanning = true
+        scanner?.startScan(scanCallback)
+        Log.d(TAG, "=== Scan started ===")
+
+        mainHandler.postDelayed({ stopScan() }, SCAN_TIMEOUT_MS)
+    }
+
+    @SuppressLint("MissingPermission")
+    fun stopScan() {
+        if (!isScanning) return
+        isScanning = false
+        scanner?.stopScan(scanCallback)
+        Log.d(TAG, "=== Scan stopped ===")
+        listener.onScanStopped()
+    }
+
+    private val scanCallback = object : ScanCallback() {
+        @SuppressLint("MissingPermission")
+        override fun onScanResult(callbackType: Int, result: ScanResult?) {
+            val d = result?.device ?: return
+            listener.onScanResult(StarmaxDevice(d.name, d.address))
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+            listener.onError("Scan failed: $errorCode")
+        }
+    }
+
+    // ------------------------------------------------------------------ Connect
+
+    @SuppressLint("MissingPermission")
+    fun connect(address: String) {
+        stopScan()
+
+        val adapter = bluetoothAdapter
+        val device = adapter?.getRemoteDevice(address)
+        if (device == null) {
+            listener.onError("Device not found for $address")
+            return
+        }
+
+        Log.d(TAG, "Connecting to $address")
+        gatt?.close()
+        gatt = device.connectGatt(context, false, gattCallback)
+    }
+
+    @SuppressLint("MissingPermission")
+    fun disconnect() {
+        try {
+            gatt?.disconnect()
+            gatt?.close()
+        } catch (e: Exception) {
+            Log.w(TAG, "disconnect error", e)
+        } finally {
+            gatt = null
+            writeChar = null
+            notifyChar = null
+            if (connected) {
+                connected = false
+                listener.onConnectionStateChanged(false)
+            }
+        }
+    }
+
+    fun cleanup() {
+        disconnect()
+        stopScan()
+    }
+
+    // ------------------------------------------------------------------ Send commands (from StarmaxManager)
+
+    fun sendCommand(bytes: ByteArray) {
+        sendToDevice(bytes)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun sendToDevice(bytes: ByteArray) {
+        val g = gatt
+        val c = writeChar
+
+        if (g == null || c == null) {
+            listener.onError("Not connected to device")
+            return
+        }
+
+        c.value = bytes
+        val ok = g.writeCharacteristic(c)
+        if (!ok) {
+            listener.onError("writeCharacteristic failed")
+        }
+    }
+
+    // ------------------------------------------------------------------ GATT callback
+
+    private val gattCallback = object : BluetoothGattCallback() {
+
+        @SuppressLint("MissingPermission")
+        override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+            if (status != BluetoothGatt.GATT_SUCCESS) {
+                listener.onError("GATT error $status")
+                disconnect()
+                return
+            }
+
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                Log.d(TAG, "Connected, requesting MTU / discovering")
+                this@StarmaxBleManager.gatt = gatt
+                connected = true
+                listener.onConnectionStateChanged(true)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    gatt.requestMtu(REQUESTED_MTU)
+                } else {
+                    gatt.discoverServices()
+                }
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                Log.d(TAG, "Disconnected")
+                disconnect()
+            }
+        }
+
+        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+        override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
+            Log.d(TAG, "MTU=$mtu status=$status")
+            gatt.discoverServices()
+        }
+
+        @SuppressLint("MissingPermission")
+        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+            if (status != BluetoothGatt.GATT_SUCCESS) {
+                listener.onError("Service discovery failed: $status")
+                return
+            }
+
+            var w: BluetoothGattCharacteristic? = null
+            var n: BluetoothGattCharacteristic? = null
+
+            for (svc in gatt.services) {
+                for (ch in svc.characteristics) {
+                    val p = ch.properties
+                    if (w == null &&
+                        (p and (BluetoothGattCharacteristic.PROPERTY_WRITE or
+                                BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE)) != 0
+                    ) {
+                        w = ch
+                    }
+                    if (n == null &&
+                        (p and BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0
+                    ) {
+                        n = ch
+                    }
+                }
+            }
+
+            if (w == null || n == null) {
+                listener.onError("Write/notify characteristics not found")
+                return
+            }
+
+            writeChar = w
+            notifyChar = n
+            Log.d(TAG, "writeChar=${w.uuid}, notifyChar=${n.uuid}")
+
+            // Enable notifications
+            gatt.setCharacteristicNotification(n, true)
+            val cccd = n.getDescriptor(CCCD_UUID)
+            if (cccd != null) {
+                cccd.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                gatt.writeDescriptor(cccd)
+            } else {
+                // If there is no CCCD, just start using it
+                onChannelReady()
+            }
+        }
+
+        override fun onDescriptorWrite(
+            gatt: BluetoothGatt,
+            descriptor: BluetoothGattDescriptor,
+            status: Int
+        ) {
+            if (descriptor.uuid == CCCD_UUID && status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d(TAG, "Notifications enabled, channel ready")
+                onChannelReady()
+            }
+        }
+
+        // After notifications ready – follow vendor example: pair() then other commands.
+        private fun onChannelReady() {
+            // 1) Pair
+            Log.d(TAG, "Sending pair()")
+            sendToDevice(sender.pair())
+
+            // 2) Optionally sync time
+            Log.d(TAG, "Sending setTime()")
+            sendToDevice(sender.setTime())
+
+            // 3) Ask for current health data (this feeds your watch data screen)
+            Log.d(TAG, "Sending getHealthDetail()")
+            sendToDevice(sender.getHealthDetail())
+        }
+
+        @Deprecated("Deprecated in Java")
+        override fun onCharacteristicChanged(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic
+        ) {
+            val value = characteristic.value ?: return
+
+            try {
+                // EXACTLY like the PDF:
+                // val response = MapStarmaxNotify.instance.notify(byteArray)
+                val response = mapNotify.notify(value)
+                val type = response.type
+                val obj = response.obj
+
+                Log.d(TAG, "Notify type=$type obj=$obj")
+
+                // Handle CRC / generic failure
+                if (type == NotifyType.Failure || type == NotifyType.CrcFailure) {
+                    listener.onError("Device returned error: $type")
+                    return
+                }
+
+                // HealthDetail / Health / RealTime carry the “watch data” map
+                if ((type == NotifyType.HealthDetail ||
+                            type == NotifyType.RealTimeData) && obj is Map<*, *>
+                ) {
+                    val health = parseHealthDetail(obj)
+                    listener.onHealthDataUpdated(health)
+                }
+
+                // Pair reply etc. are ignored for now but you can log them:
+                // if (type == NotifyType.Pair) { ... }
+
+            } catch (t: Throwable) {
+                listener.onError("Notify parse failed", t)
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------ Map -> model
+
+    private fun parseHealthDetail(map: Map<*, *>): StarmaxHealthData {
+        fun intValue(key: String): Int =
+            (map[key] as? Number)?.toInt() ?: 0
+
+        val isWear = when (val v = map["is_wear"]) {
+            is Number -> v.toInt()
+            else -> -1
+        }
+
+        return StarmaxHealthData(
+            totalSteps        = intValue("total_steps"),
+            totalHeat         = intValue("total_heat"),
+            totalDistance     = intValue("total_distance"),
+            totalSleepMinutes = intValue("total_sleep"),
+            deepSleepMinutes  = intValue("total_deep_sleep"),
+            lightSleepMinutes = intValue("total_light_sleep"),
+            heartRate         = intValue("current_heart_rate"),
+            systolic          = intValue("current_ss"),
+            diastolic         = intValue("current_fz"),
+            bloodOxygen       = intValue("current_blood_oxygen"),
+            pressure          = intValue("current_pressure"),
+            met               = intValue("current_met"),
+            mai               = intValue("current_mai"),
+            tempTenthC        = intValue("current_temp"),
+            bloodSugarTenth   = intValue("current_blood_sugar"),
+            isWear            = isWear
+        )
     }
 }

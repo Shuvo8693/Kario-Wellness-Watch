@@ -1,3 +1,4 @@
+/*
 package com.example.kario_wellness_watch.starmax
 
 import android.content.Context
@@ -5,18 +6,24 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import io.flutter.plugin.common.EventChannel
-import jdk.internal.net.http.common.Log
 import java.util.Calendar
+import com.starmax.bluetoothsdk.StarmaxSend
 
+*/
 /**
  * StarmaxManager - Manages communication with Starmax smartwatch
  *
  * IMPORTANT: Uses Nordic UART Service (NUS) UUIDs like the SDK Demo app:
  * - Service: 6e400001-b5a3-f393-e0a9-e50e24dcca9d
  * - Write: 6e400002-b5a3-f393-e0a9-e50e24dcca9d
- * - Notify: 6e400003-b5a3-f393-e0a9-e50e24dcca9d
- */
-class StarmaxManager(
+ * - Notify: 6e400003-b5a3-f393-e0a9-e50e24dcca9d*//*
+
+
+
+
+
+*/
+/*class StarmaxManager(
     private val context: Context
 ) {
 
@@ -49,6 +56,7 @@ class StarmaxManager(
 
     // BLE Manager
     private val bleManager: StarmaxBleManager
+     val starmaxSend: StarmaxSend = StarmaxSend()
 
     // Event sink for Flutter
     private var eventSink: EventChannel.EventSink? = null
@@ -155,10 +163,15 @@ class StarmaxManager(
 
     // ==================== COMMAND BUILDING ====================
 
-    /**
+*//*
+*/
+/**
      * Build command packet with CRC
-     * Format: [0xDA] [CMD] [LEN_LOW] [LEN_HIGH] [DATA...] [CRC_HIGH] [CRC_LOW]
-     */
+     * Format: [0xDA] [CMD] [LEN_LOW] [LEN_HIGH] [DATA] [CRC_HIGH] [CRC_LOW]*//*
+*/
+/*
+
+
     private fun buildCommand(cmd: Int, data: IntArray): ByteArray {
         val packet = ByteArray(data.size + 6)
 
@@ -180,9 +193,14 @@ class StarmaxManager(
         return packet
     }
 
-    /**
-     * CRC-16/ARC: poly=0x8005, init=0x0000, refin=true, refout=true
-     */
+*//*
+*/
+/**
+     * CRC-16/ARC: poly=0x8005, init=0x0000, refin=true, refout=true*//*
+*/
+/*
+
+
     private fun calculateCRC16(data: ByteArray, length: Int): Int {
         var crc = 0x0000  // CRITICAL: init=0x0000 for CRC-16/ARC
 
@@ -198,9 +216,9 @@ class StarmaxManager(
         }
         return crc and 0xFFFF
     }
-
+//todo : build command with a packet format then write data with  gatt.writeCharacteristic()
     private fun sendCommand(cmd: Int, data: IntArray) {
-        val packet = buildCommand(cmd, data)
+        val packet = buildCommand(cmd, data) // send packet Format: [0xDA] [CMD] [LEN_LOW] [LEN_HIGH] [DATA...] [CRC_HIGH] [CRC_LOW]
         val hex = packet.joinToString(" ") { String.format("%02X", it) }
         Log.d(TAG, "Sending: $hex")
         bleManager.writeData(packet)
@@ -553,4 +571,236 @@ class StarmaxManager(
         bleManager.dispose()
         eventSink = null
     }
+}*//*
+
+*/
+
+
+package com.example.kario_wellness_watch.starmax
+
+import android.content.Context
+import android.util.Log
+import com.starmax.bluetoothsdk.StarmaxSend
+import java.util.Calendar
+
+class StarmaxManager(
+    context: Context
+) : StarmaxBleListener {
+
+    companion object {
+        private const val TAG = "StarmaxManager"
+    }
+
+    interface UiListener {
+        fun onEvent(event: Map<String, Any?>)
+    }
+
+    private val ble = StarmaxBleManager(context.applicationContext, this)
+    private val sender = StarmaxSend()
+
+    @Volatile
+    private var uiListener: UiListener? = null
+
+    fun setUiListener(listener: UiListener?) {
+        uiListener = listener
+    }
+
+    // ---------- BLE basic control (used by MethodChannelHandler) ----------
+
+    fun startScan() = ble.startScan()
+    fun stopScan() = ble.stopScan()
+    fun connect(address: String) = ble.connect(address)
+    fun disconnect() = ble.disconnect()
+    fun isConnected(): Boolean = ble.isConnected()
+    fun cleanup() = ble.cleanup()
+
+    // ---------- High-level operations from your MethodChannel ----------
+
+    fun initializeWatch() {
+        // we already send pair + setTime + getHealthDetail in BLE once channel is ready,
+        // so here we can maybe just refresh health data:
+        getHealthDetail()
+    }
+
+    // Device info
+    fun getBattery() = ble.sendCommand(sender.getPower())
+    fun getVersion() = ble.sendCommand(sender.getVersion())
+    fun getDeviceState() = ble.sendCommand(sender.getState())
+
+    fun setDeviceState(
+        timeFormat: Int,
+        unit: Int,
+        tempUnit: Int,
+        language: Int,
+        wristUp: Int,
+        backlightTime: Int,
+        brightness: Int
+    ) {
+        val wristUpBool = wristUp != 0
+        val cmd = sender.setState(
+            timeFormat,
+            unit,
+            tempUnit,
+            language,
+            backlightTime,
+            brightness,
+            wristUpBool
+        )
+        ble.sendCommand(cmd)
+    }
+
+    // User info
+    fun getUserInfo() = ble.sendCommand(sender.getUserInfo())
+
+    fun setUserInfo(sex: Int, age: Int, height: Int, weight: Double) {
+        val cmd = sender.setUserInfo(sex, age, height, weight.toInt())
+        ble.sendCommand(cmd)
+    }
+
+    // Goals
+    fun getGoals() = ble.sendCommand(sender.getGoals())
+
+    fun setGoals(steps: Int, calories: Int, distance: Double) {
+        val cmd = sender.setGoals(steps, calories, distance.toInt())
+        ble.sendCommand(cmd)
+    }
+
+    // Live / current health data (for watch data screen)
+    fun getHealthDetail() = ble.sendCommand(sender.getHealthDetail())
+    fun getHeartRate()    = getHealthDetail()
+    fun getSteps()        = getHealthDetail()
+    fun getBloodOxygen()  = getHealthDetail()
+
+    // Health monitoring switches
+    fun getHealthOpen() = ble.sendCommand(sender.getHealthOpen())
+
+    fun setHealthOpen(
+        heartRate: Boolean,
+        bloodPressure: Boolean,
+        bloodOxygen: Boolean,
+        pressure: Boolean,
+        temperature: Boolean,
+        bloodSugar: Boolean
+    ) {
+        val cmd = sender.setHealthOpen(
+            heartRate = heartRate,
+            bloodPressure = bloodPressure,
+            bloodOxygen = bloodOxygen,
+            pressure = pressure,
+            temp = temperature,
+            bloodSugar = bloodSugar,
+            respirationRate = false
+        )
+        ble.sendCommand(cmd)
+    }
+
+    // History – the SDK stubs already match the Calendar version
+    fun getStepHistory(c: Calendar) =
+        ble.sendCommand(sender.getStepHistory(c))
+
+    fun getHeartRateHistory(c: Calendar) =
+        ble.sendCommand(sender.getHeartRateHistory(c))
+
+    fun getBloodPressureHistory(c: Calendar) =
+        ble.sendCommand(sender.getBloodPressureHistory(c))
+
+    fun getBloodOxygenHistory(c: Calendar) =
+        ble.sendCommand(sender.getBloodOxygenHistory(c))
+
+    fun getSleepHistory(c: Calendar) =
+        ble.sendCommand(sender.getSleepHistory(c))
+
+    fun getSportHistory(c: Calendar) =
+        ble.sendCommand(sender.getSportHistory())
+
+    // Device control
+    fun findDevice(enable: Boolean) =
+        ble.sendCommand(sender.findDevice(enable))
+
+    fun cameraControl(enter: Boolean) {
+        // TODO: map to actual CameraControlType (Enter / Exit / TakePhoto)
+        Log.d(TAG, "cameraControl($enter) not fully implemented")
+    }
+
+    fun takePhoto() {
+        Log.d(TAG, "takePhoto() not implemented – map to CameraControlType.TakePhoto")
+    }
+
+    fun setTime() = ble.sendCommand(sender.setTime())
+    fun factoryReset() = ble.sendCommand(sender.reset())
+
+    // ---------- StarmaxBleListener → EventChannel events ----------
+
+    override fun onScanResult(device: StarmaxDevice) {
+        uiListener?.onEvent(
+            mapOf(
+                "event" to "deviceFound",
+                "data" to mapOf(
+                    "name" to (device.name ?: "Unknown"),
+                    "address" to device.address,
+                    // we don't have RSSI from our BLE wrapper right now, so 0
+                    "rssi" to 0
+                )
+            )
+        )
+    }
+
+    override fun onScanStopped() {
+        // optional – not used in your Dart, but harmless if present
+        uiListener?.onEvent(
+            mapOf(
+                "event" to "scanStopped",
+                "data" to emptyMap<String, Any>()
+            )
+        )
+    }
+
+    override fun onConnectionStateChanged(connected: Boolean) {
+        uiListener?.onEvent(
+            mapOf(
+                "event" to "connectionStatus",
+                "data" to mapOf(
+                    "status" to if (connected) "connected" else "disconnected"
+                )
+            )
+        )
+    }
+
+    override fun onHealthDataUpdated(data: StarmaxHealthData) {
+        uiListener?.onEvent(
+            mapOf(
+                "event" to "healthDetail",
+                "data" to mapOf(
+                    // map to what StarmaxService expects
+                    "steps"        to data.totalSteps,
+                    "calories"     to data.totalHeat,
+                    // you can scale if needed, for now we just pass as km-ish
+                    "distance"     to data.totalDistance.toDouble(),
+                    "heartRate"    to data.heartRate,
+                    "bloodOxygen"  to data.bloodOxygen,
+                    "systolic"     to data.systolic,
+                    "diastolic"    to data.diastolic,
+                    "pressure"     to data.pressure,
+                    // temp is in 1/10 °C in our model
+                    "temperature"  to data.tempTenthC / 10.0,
+                    "isWearing"    to (data.isWear == 1)
+                )
+            )
+        )
+    }
+
+
+    override fun onError(message: String, throwable: Throwable?) {
+        throwable?.printStackTrace()
+
+        uiListener?.onEvent(
+            mapOf(
+                "event" to "error",
+                "data"  to mapOf(
+                    "message" to (message + (throwable?.message?.let { ": $it" } ?: ""))
+                )
+            )
+        )
+    }
 }
+
